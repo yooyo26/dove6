@@ -1,0 +1,16 @@
+# Flutter build output
+**/build/
+**/.dart_tool/
+**/.flutter-plugins
+**/.flutter-plugins-dependencies
+**/.packages
+
+# Go compiled binary
+dove6_server/dove6_server
+
+# VSCode settings
+.vscode/
+
+# System files
+.DS_Store
+Thumbs.db
