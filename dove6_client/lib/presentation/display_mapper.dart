@@ -85,7 +85,7 @@ class _DisplayMapperState extends State<DisplayMapper> {
       return _PriorityScreen(
         key: const ValueKey('warning'),
         icon: Icons.warning_amber_rounded,
-        color: Colors.orangeAccent,
+        color: const Color(0xFFE8650A),
         title: 'WARNING',
         message: 'Operational alert — stand by',
       );
@@ -94,7 +94,7 @@ class _DisplayMapperState extends State<DisplayMapper> {
       return _PriorityScreen(
         key: const ValueKey('manual'),
         icon: Icons.pan_tool_rounded,
-        color: Colors.yellowAccent,
+        color: const Color(0xFFCC3300),
         title: 'MANUAL MODE',
         message: 'Train under manual control',
       );
@@ -103,7 +103,7 @@ class _DisplayMapperState extends State<DisplayMapper> {
       return _PriorityScreen(
         key: const ValueKey('recovery'),
         icon: Icons.sync_problem_rounded,
-        color: Colors.redAccent,
+        color: const Color(0xFF333333),
         title: 'CONNECTION LOST',
         message: 'Attempting to reconnect…',
       );

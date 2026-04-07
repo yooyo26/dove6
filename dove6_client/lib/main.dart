@@ -51,11 +51,11 @@ class _Dove6AppState extends State<Dove6App> {
       title: 'Dove6',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
-        brightness: Brightness.dark,
-        scaffoldBackgroundColor: const Color(0xFF0A0A0A),
-        colorScheme: const ColorScheme.dark(
-          surface: Color(0xFF141414),
-          primary: Color(0xFF4FC3F7),
+        brightness: Brightness.light,
+        scaffoldBackgroundColor: const Color(0xFFE8E4DF),
+        colorScheme: const ColorScheme.light(
+          surface: Color(0xFFD6CFC7),
+          primary: Color(0xFFE8650A),
         ),
       ),
       home: DisplayMapper(dataStream: _service.stream),

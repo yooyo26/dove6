@@ -2,15 +2,15 @@
 import 'package:flutter/material.dart';
 
 // ── Colour constants ──────────────────────────────────────────────────────────
-const kBg         = Color(0xFF0A0A0A);
-const kSurface    = Color(0xFF141414);
-const kCard       = Color(0xFF1C1C1E);
-const kBorder     = Color(0xFF2A2A2A);
-const kPrimary    = Color(0xFFFFFFFF);
-const kSecondary  = Color(0xFF888888);
-const kAccent     = Color(0xFF4FC3F7);
-const kAccentGold = Color(0xFFFFD54F);
-const kDim        = Color(0xFF333333);
+const kBg         = Color(0xFFE8E4DF); // warm light grey background
+const kSurface    = Color(0xFFD6CFC7); // slightly darker surface
+const kCard       = Color(0xFFD6CFC7); // card background
+const kBorder     = Color(0xFFC8C3BC); // subtle border
+const kPrimary    = Color(0xFF1A1A1A); // near black — main text
+const kSecondary  = Color(0xFF5F5E5A); // muted grey — labels
+const kAccent     = Color(0xFFE8650A); // orange — stations, highlights
+const kAccentGold = Color(0xFF333333); // dark grey — speed number
+const kDim        = Color(0xFFBFB9B1); // very subtle — track, dividers
 
 // ── ScreenScaffold ────────────────────────────────────────────────────────────
 class ScreenScaffold extends StatelessWidget {
@@ -162,19 +162,19 @@ class RouteProgressPainter extends CustomPainter {
       final bool isCurrent = i == currentStationIndex;
 
       if (isCurrent) {
-        // Gold ring + filled dot
+        // Orange ring + filled dot
         final ringPaint = Paint()
-          ..color = kAccentGold
+          ..color = kAccent.withValues(alpha: 0.35)
           ..style = PaintingStyle.stroke
           ..strokeWidth = 2;
         final fillPaint = Paint()
-          ..color = kAccentGold
+          ..color = kAccent
           ..style = PaintingStyle.fill;
         canvas.drawCircle(center, dotRadius, fillPaint);
         canvas.drawCircle(center, dotRadius + 3, ringPaint);
       } else if (isPassed) {
         final paint = Paint()
-          ..color = kAccent
+          ..color = kAccent.withValues(alpha: 0.5)
           ..style = PaintingStyle.fill;
         canvas.drawCircle(center, dotRadius, paint);
       } else {
@@ -184,11 +184,11 @@ class RouteProgressPainter extends CustomPainter {
         canvas.drawCircle(center, dotRadius, paint);
       }
 
-      // Station label
+      // Station label — matches dot color
       final Color labelColor = isCurrent
-          ? kAccentGold
+          ? kAccent
           : isPassed
-              ? kAccent
+              ? kAccent.withValues(alpha: 0.5)
               : kDim;
 
       final textSpan = TextSpan(
