@@ -7,12 +7,18 @@ import 'data/nvr_data_service.dart';
 import 'presentation/display_mapper.dart';
 
 // ── Configuration ─────────────────────────────────────────────────────────────
-// Set to true  → uses local fake simulation (no server needed)
-// Set to false → polls the Go server at nvrIp
+// Set to true  → uses local Dart fake simulation (no server needed)
+// Set to false → polls the NVR server defined by nvrBaseUrl below
 const bool useLocalSimulation = false;
 
-// Your laptop IP address on WSL. Find it with: ip addr | grep "inet "
-const String nvrIp = '127.0.0.1';
+// Base URL of the NVR server.
+//   dove6_server (dev)  → 'http://127.0.0.1:8080'
+//   real NVR (R6S)      → 'http://192.168.1.50:3002/v0'
+const String nvrBaseUrl = 'http://127.0.0.1:8080';
+
+// Train identifier sent by the NVR — shown in every screen header chip.
+// Change this per deployment to match the physical train unit.
+const String trainId = 'DOVE-6';
 // ─────────────────────────────────────────────────────────────────────────────
 
 void main() {
@@ -35,7 +41,7 @@ class _Dove6AppState extends State<Dove6App> {
     super.initState();
     _service = useLocalSimulation
         ? FakeDataService()
-        : NvrDataService(nvrIp: nvrIp);
+        : NvrDataService(baseUrl: nvrBaseUrl, trainId: trainId);
     _service.start();
   }
 

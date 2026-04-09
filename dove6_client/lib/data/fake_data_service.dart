@@ -14,6 +14,13 @@ class FakeDataService implements DataService {
     'Casa Voyageurs', 'Rabat Agdal', 'Kenitra', 'Tanger Ville',
   ];
 
+  static const List<String> _arabicStations = [
+    'الدار البيضاء المسافرين',
+    'الرباط أكدال',
+    'القنيطرة',
+    'طنجة المدينة',
+  ];
+
   static const List<Map<String, dynamic>> _script = [
     {'state': TrainState.idle,          'cur': 0, 'nxt': 1, 'spd': 0.0,   'prg': 0.00, 'dur': 4},
     {'state': TrainState.routeSelected, 'cur': 0, 'nxt': 1, 'spd': 0.0,   'prg': 0.00, 'dur': 3},
@@ -66,6 +73,20 @@ class FakeDataService implements DataService {
       routeProgress: s['prg'] as double,
       routeStations: _stations,
       timestamp: DateTime.now(),
+      currentStationFr:  _stations[s['cur'] as int],
+      currentStationAr:  _arabicStations[s['cur'] as int],
+      nextStationFr:     _stations[s['nxt'] as int],
+      nextStationAr:     _arabicStations[s['nxt'] as int],
+      destinationFr:     _stations.last,
+      destinationAr:     _arabicStations.last,
+      routeStationsFr:   _stations,
+      routeStationsAr:   _arabicStations,
+      messageEn:         '',
+      messageFr:         '',
+      messageAr:         '',
+      activeAudioLang:   '',
+      audioFile:         '',
+      passengerCount:    0,
     ));
   }
 

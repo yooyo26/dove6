@@ -5,6 +5,7 @@ enum TrainState {
   atStation,
   departing,
   moving,
+  coasting,
   arriving,
   endOfRoute,
   warning,

@@ -10,6 +10,8 @@ import (
 )
 
 func main() {
+	// Load route from routes.json
+	activeRoute = loadRoute()
 	fillJourney()
 	setupRoutes()
 
@@ -32,15 +34,24 @@ func main() {
 		}
 	}()
 
-	fmt.Println("┌─────────────────────────────────────────┐")
-	fmt.Println("│         DOVE6 NVR Server v1.0           │")
-	fmt.Println("│                                         │")
-	fmt.Println("│  GET /state        current train state  │")
-	fmt.Println("│  GET /health       connectivity check   │")
-	fmt.Println("│  GET /jump?step=N  jump to step N       │")
-	fmt.Println("│                                         │")
-	fmt.Println("│  Listening on http://0.0.0.0:8080       │")
-	fmt.Println("└─────────────────────────────────────────┘")
+	fmt.Println("┌──────────────────────────────────────────────────┐")
+	fmt.Println("│         DOVE6 NVR Server v2.0                    │")
+	fmt.Println("│         Matching real NVR API contract           │")
+	fmt.Println("│                                                  │")
+	fmt.Printf( "│  Active route: %-34s│\n", activeRoute.Name)
+	fmt.Println("│  GET /running-state          current state       │")
+	fmt.Println("│  GET /audio-state            audio language      │")
+	fmt.Println("│  GET /data/speed             current speed       │")
+	fmt.Println("│  GET /data/distance-ratio    route progress      │")
+	fmt.Println("│  GET /data/current-route     route info          │")
+	fmt.Println("│  GET /data/stations-in-route/:id  station ids   │")
+	fmt.Println("│  GET /data/station-info/:id  station names       │")
+	fmt.Println("│  GET /sensors/human-counter  passenger count     │")
+	fmt.Println("│  GET /health                 connectivity        │")
+	fmt.Println("│  GET /jump?step=N            demo control        │")
+	fmt.Println("│                                                  │")
+	fmt.Println("│  Listening on http://0.0.0.0:8080                │")
+	fmt.Println("└──────────────────────────────────────────────────┘")
 
 	// Shutdown cleanly when you press Ctrl+C
 	quit := make(chan os.Signal, 1)

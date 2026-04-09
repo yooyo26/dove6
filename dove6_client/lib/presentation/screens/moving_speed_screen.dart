@@ -5,7 +5,13 @@ import '_shared.dart';
 
 class MovingSpeedScreen extends StatelessWidget {
   final DisplayData data;
-  const MovingSpeedScreen({super.key, required this.data});
+  final bool isArabic;
+
+  const MovingSpeedScreen({
+    super.key,
+    required this.data,
+    required this.isArabic,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -18,12 +24,11 @@ class MovingSpeedScreen extends StatelessWidget {
               TrainIdChip(trainId: data.trainId),
               const Spacer(),
               Text(
-                data.destination,
-                style: const TextStyle(
-                  color: kSecondary,
-                  fontSize: 14,
-                ),
+                isArabic ? data.destinationAr : data.destinationFr,
+                style: const TextStyle(color: kSecondary, fontSize: 14),
               ),
+              const SizedBox(width: 12),
+              AudioSyncBadge(activeAudioLang: data.activeAudioLang),
             ],
           ),
           const Spacer(),
@@ -52,7 +57,38 @@ class MovingSpeedScreen extends StatelessWidget {
           ),
           const Spacer(),
           const KDivider(),
-          StationRow(label: 'Next stop', value: data.nextStation, valueColor: kAccent),
+          Text(
+            isArabic ? 'المحطة القادمة' : 'PROCHAIN ARRÊT',
+            style: TextStyle(
+              color: kSecondary,
+              fontSize: 13,
+              letterSpacing: isArabic ? 0 : 3,
+            ),
+          ),
+          const SizedBox(height: 4),
+          isArabic
+              ? Directionality(
+                  textDirection: TextDirection.rtl,
+                  child: Align(
+                    alignment: Alignment.centerRight,
+                    child: Text(
+                      data.nextStationAr,
+                      style: const TextStyle(
+                        color: kAccent,
+                        fontSize: 22,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ),
+                )
+              : Text(
+                  data.nextStationFr,
+                  style: const TextStyle(
+                    color: kAccent,
+                    fontSize: 22,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
           const SizedBox(height: 40),
         ],
       ),

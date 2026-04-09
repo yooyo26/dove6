@@ -110,106 +110,180 @@ class KDivider extends StatelessWidget {
 
 // ── RouteProgressPainter ──────────────────────────────────────────────────────
 class RouteProgressPainter extends CustomPainter {
+  final List<String> stations;
   final double progress;
   final int currentStationIndex;
-  final List<String> stations;
 
   const RouteProgressPainter({
+    required this.stations,
     required this.progress,
     required this.currentStationIndex,
-    required this.stations,
   });
 
   @override
   void paint(Canvas canvas, Size size) {
-    const double trackY = 16;
-    const double dotRadius = 7;
-    const double labelOffset = 28;
+    final int total = stations.length;
+    if (total == 0) return;
+    final int cur   = currentStationIndex.clamp(0, total - 1);
+    final int last  = total - 1;
+    final double w  = size.width;
+    final double trackY = size.height * 0.42;
 
-    final trackPaint = Paint()
-      ..color = kDim
-      ..strokeWidth = 2
-      ..style = PaintingStyle.stroke;
+    // ── Draw the grey track line ──────────────────────────
+    canvas.drawLine(
+      Offset(0, trackY),
+      Offset(w, trackY),
+      Paint()
+        ..color       = kDim
+        ..strokeWidth = 2
+        ..strokeCap   = StrokeCap.round,
+    );
 
-    final progressPaint = Paint()
-      ..color = kAccent
-      ..strokeWidth = 2
-      ..style = PaintingStyle.stroke;
+    // ── Draw ALL station dots ─────────────────────────────
+    for (int i = 0; i < total; i++) {
+      final double x = i == 0
+          ? 0
+          : i == last
+              ? w
+              : w * i / last;
 
-    // Draw full track
-    canvas.drawLine(Offset(0, trackY), Offset(size.width, trackY), trackPaint);
-
-    // Draw progress portion
-    if (progress > 0) {
-      canvas.drawLine(
-        Offset(0, trackY),
-        Offset(progress * size.width, trackY),
-        progressPaint,
-      );
-    }
-
-    if (stations.isEmpty) return;
-
-    final int lastIndex = stations.length - 1;
-
-    for (int i = 0; i <= lastIndex; i++) {
-      final double x = lastIndex == 0
-          ? size.width / 2
-          : i * size.width / lastIndex;
-      final Offset center = Offset(x, trackY);
-
-      final bool isPassed = i < currentStationIndex;
-      final bool isCurrent = i == currentStationIndex;
+      final bool isPast    = i < cur;
+      final bool isCurrent = i == cur;
+      final bool isNext    = i == cur + 1;
 
       if (isCurrent) {
-        // Orange ring + filled dot
-        final ringPaint = Paint()
-          ..color = kAccent.withValues(alpha: 0.35)
-          ..style = PaintingStyle.stroke
-          ..strokeWidth = 2;
-        final fillPaint = Paint()
-          ..color = kAccent
-          ..style = PaintingStyle.fill;
-        canvas.drawCircle(center, dotRadius, fillPaint);
-        canvas.drawCircle(center, dotRadius + 3, ringPaint);
-      } else if (isPassed) {
-        final paint = Paint()
-          ..color = kAccent.withValues(alpha: 0.5)
-          ..style = PaintingStyle.fill;
-        canvas.drawCircle(center, dotRadius, paint);
+        // Glow ring
+        canvas.drawCircle(
+          Offset(x, trackY), 16,
+          Paint()
+            ..color = kAccent.withValues(alpha: 0.13)
+            ..style = PaintingStyle.fill,
+        );
+        // Current dot
+        canvas.drawCircle(
+          Offset(x, trackY), 10,
+          Paint()
+            ..color = kAccent
+            ..style = PaintingStyle.fill,
+        );
+      } else if (isPast) {
+        canvas.drawCircle(
+          Offset(x, trackY), 5,
+          Paint()
+            ..color = kAccent
+            ..style = PaintingStyle.fill,
+        );
+      } else if (isNext) {
+        // Hollow ring — filled with background color
+        canvas.drawCircle(
+          Offset(x, trackY), 6,
+          Paint()
+            ..color = kBg
+            ..style = PaintingStyle.fill,
+        );
+        canvas.drawCircle(
+          Offset(x, trackY), 6,
+          Paint()
+            ..color       = kAccent
+            ..style       = PaintingStyle.stroke
+            ..strokeWidth = 2.5,
+        );
       } else {
-        final paint = Paint()
-          ..color = kDim
-          ..style = PaintingStyle.fill;
-        canvas.drawCircle(center, dotRadius, paint);
+        // Future dot
+        canvas.drawCircle(
+          Offset(x, trackY), 4,
+          Paint()
+            ..color = kDim
+            ..style = PaintingStyle.fill,
+        );
       }
-
-      // Station label — matches dot color
-      final Color labelColor = isCurrent
-          ? kAccent
-          : isPassed
-              ? kAccent.withValues(alpha: 0.5)
-              : kDim;
-
-      final textSpan = TextSpan(
-        text: stations[i],
-        style: TextStyle(color: labelColor, fontSize: 11),
-      );
-      final textPainter = TextPainter(
-        text: textSpan,
-        textAlign: TextAlign.center,
-        textDirection: TextDirection.ltr,
-      )..layout();
-
-      textPainter.paint(
-        canvas,
-        Offset(x - textPainter.width / 2, trackY + labelOffset),
-      );
     }
+
+    // ── Origin label (left) ───────────────────────────────
+    final tpOrigin = TextPainter(
+      text: TextSpan(
+        text: stations.first,
+        style: const TextStyle(
+          color: kDim,
+          fontSize: 9,
+          fontWeight: FontWeight.w400,
+        ),
+      ),
+      textDirection: TextDirection.ltr,
+    )..layout(maxWidth: w / 2);
+    tpOrigin.paint(canvas, Offset(0, trackY + 20));
+
+    // ── Destination label (right) ─────────────────────────
+    final tpDest = TextPainter(
+      text: TextSpan(
+        text: stations.last,
+        style: const TextStyle(
+          color: kDim,
+          fontSize: 9,
+          fontWeight: FontWeight.w400,
+        ),
+      ),
+      textDirection: TextDirection.ltr,
+    )..layout(maxWidth: w / 2);
+    tpDest.paint(
+      canvas,
+      Offset(w - tpDest.width, trackY + 20),
+    );
   }
 
   @override
-  bool shouldRepaint(RouteProgressPainter oldDelegate) =>
-      oldDelegate.progress != progress ||
-      oldDelegate.currentStationIndex != currentStationIndex;
+  bool shouldRepaint(RouteProgressPainter old) =>
+      old.progress            != progress            ||
+      old.currentStationIndex != currentStationIndex ||
+      old.stations            != stations;
 }
+
+// ── AudioSyncBadge ────────────────────────────────────────────────────────────
+class AudioSyncBadge extends StatelessWidget {
+  final String activeAudioLang;
+
+  const AudioSyncBadge({
+    super.key,
+    required this.activeAudioLang,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    if (activeAudioLang.isEmpty) return const SizedBox.shrink();
+
+    final label = switch (activeAudioLang) {
+      'fr' => 'FR',
+      'ar' => 'ع',
+      _    => 'EN',
+    };
+
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+      decoration: BoxDecoration(
+        color: kAccent,
+        borderRadius: BorderRadius.circular(4),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          const Icon(
+            Icons.volume_up_rounded,
+            size: 12,
+            color: Colors.white,
+          ),
+          const SizedBox(width: 4),
+          Text(
+            label,
+            style: const TextStyle(
+              color: Colors.white,
+              fontSize: 11,
+              fontWeight: FontWeight.w700,
+              letterSpacing: 1,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
