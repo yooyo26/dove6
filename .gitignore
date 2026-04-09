@@ -1,16 +1,19 @@
-# Flutter build output
-**/build/
-**/.dart_tool/
-**/.flutter-plugins
-**/.flutter-plugins-dependencies
-**/.packages
+# Flutter
+client/build/
+client/.dart_tool/
+client/.flutter-plugins
+client/.flutter-plugins-dependencies
+client/.packages
+client/pubspec.lock
 
-# Go compiled binary
-dove6_server/dove6_server
+# Go
+server/dove6_server
+server/*.exe
 
-# VSCode settings
+# VSCode
 .vscode/
 
-# System files
+# System
 .DS_Store
 Thumbs.db
+*.log
