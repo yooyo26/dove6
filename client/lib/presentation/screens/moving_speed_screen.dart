@@ -15,6 +15,9 @@ class MovingSpeedScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final String nxtFr = data.nextStation?.nameFr ?? '';
+    final String nxtAr = data.nextStation?.nameAr ?? '';
+
     return ScreenScaffold(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -28,7 +31,7 @@ class MovingSpeedScreen extends StatelessWidget {
                 style: const TextStyle(color: kSecondary, fontSize: 14),
               ),
               const SizedBox(width: 12),
-              AudioSyncBadge(activeAudioLang: data.activeAudioLang),
+              AudioSyncBadge(isArabic: isArabic),
             ],
           ),
           const Spacer(),
@@ -72,7 +75,7 @@ class MovingSpeedScreen extends StatelessWidget {
                   child: Align(
                     alignment: Alignment.centerRight,
                     child: Text(
-                      data.nextStationAr,
+                      nxtAr,
                       style: const TextStyle(
                         color: kAccent,
                         fontSize: 22,
@@ -82,7 +85,7 @@ class MovingSpeedScreen extends StatelessWidget {
                   ),
                 )
               : Text(
-                  data.nextStationFr,
+                  nxtFr,
                   style: const TextStyle(
                     color: kAccent,
                     fontSize: 22,

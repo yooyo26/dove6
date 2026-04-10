@@ -17,22 +17,14 @@ class RouteSelectedScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final String originName = isArabic
-        ? data.currentStationAr
-        : data.currentStationFr;
-    final String destName = isArabic
-        ? data.destinationAr
-        : data.destinationFr;
-    final String departLabel =
-        isArabic ? 'المغادرة' : 'Départ';
-    final String destLabel =
-        isArabic ? 'الوجهة' : 'Destination';
-    final String statusLabel = isArabic
-        ? 'تم اختيار المسار'
-        : 'ITINÉRAIRE SÉLECTIONNÉ';
-    final String prepLabel = isArabic
-        ? 'جارٍ الاستعداد للمغادرة...'
-        : 'Préparation au départ...';
-    final String oncfLabel = isArabic
+        ? (data.currentStation?.nameAr ?? '')
+        : (data.currentStation?.nameFr ?? '');
+    final String destName = isArabic ? data.destinationAr : data.destinationFr;
+    final String departLabel  = isArabic ? 'المغادرة' : 'Départ';
+    final String destLabel    = isArabic ? 'الوجهة' : 'Destination';
+    final String statusLabel  = isArabic ? 'تم اختيار المسار' : 'ITINÉRAIRE SÉLECTIONNÉ';
+    final String prepLabel    = isArabic ? 'جارٍ الاستعداد للمغادرة...' : 'Préparation au départ...';
+    final String oncfLabel    = isArabic
         ? 'المكتب الوطني للسكك الحديدية'
         : 'OFFICE NATIONAL DES CHEMINS DE FER';
 
@@ -46,7 +38,6 @@ class RouteSelectedScreen extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Train ID + line
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -70,10 +61,8 @@ class RouteSelectedScreen extends StatelessWidget {
                   ),
                 ],
               ),
-              // Status pill
               Container(
-                padding: const EdgeInsets.symmetric(
-                    horizontal: 14, vertical: 5),
+                padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 5),
                 decoration: BoxDecoration(
                   color: kSurface,
                   borderRadius: BorderRadius.circular(20),
@@ -145,17 +134,11 @@ class RouteSelectedScreen extends StatelessWidget {
               Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Container(
-                      width: 2, height: 28, color: kBorder),
+                  Container(width: 2, height: 28, color: kBorder),
                   const SizedBox(height: 6),
-                  const Icon(
-                    Icons.arrow_forward_rounded,
-                    color: kAccent,
-                    size: 22,
-                  ),
+                  const Icon(Icons.arrow_forward_rounded, color: kAccent, size: 22),
                   const SizedBox(height: 6),
-                  Container(
-                      width: 2, height: 28, color: kBorder),
+                  Container(width: 2, height: 28, color: kBorder),
                 ],
               ),
 

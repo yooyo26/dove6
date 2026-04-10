@@ -15,6 +15,9 @@ class ArrivedMessageScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final String curFr = data.currentStation?.nameFr ?? '';
+    final String curAr = data.currentStation?.nameAr ?? '';
+
     return ScreenScaffold(
       child: Center(
         child: Column(
@@ -35,7 +38,7 @@ class ArrivedMessageScreen extends StatelessWidget {
                 ? Directionality(
                     textDirection: TextDirection.rtl,
                     child: Text(
-                      data.currentStationAr,
+                      curAr,
                       textAlign: TextAlign.center,
                       style: const TextStyle(
                         color: kPrimary,
@@ -46,7 +49,7 @@ class ArrivedMessageScreen extends StatelessWidget {
                     ),
                   )
                 : Text(
-                    data.currentStationFr,
+                    curFr,
                     textAlign: TextAlign.center,
                     style: const TextStyle(
                       color: kPrimary,

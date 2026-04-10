@@ -15,6 +15,11 @@ class DepartingScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final String curFr = data.currentStation?.nameFr ?? '';
+    final String curAr = data.currentStation?.nameAr ?? '';
+    final String nxtFr = data.nextStation?.nameFr ?? '';
+    final String nxtAr = data.nextStation?.nameAr ?? '';
+
     return ScreenScaffold(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -23,7 +28,7 @@ class DepartingScreen extends StatelessWidget {
             children: [
               TrainIdChip(trainId: data.trainId),
               const Spacer(),
-              AudioSyncBadge(activeAudioLang: data.activeAudioLang),
+              AudioSyncBadge(isArabic: isArabic),
             ],
           ),
           const Spacer(),
@@ -57,16 +62,13 @@ class DepartingScreen extends StatelessWidget {
                   child: Align(
                     alignment: Alignment.centerRight,
                     child: Text(
-                      'المغادرة من ${data.currentStationAr}',
-                      style: const TextStyle(
-                        color: kSecondary,
-                        fontSize: 20,
-                      ),
+                      'المغادرة من $curAr',
+                      style: const TextStyle(color: kSecondary, fontSize: 20),
                     ),
                   ),
                 )
               : Text(
-                  'Départ de ${data.currentStationFr}',
+                  'Départ de $curFr',
                   style: const TextStyle(color: kSecondary, fontSize: 20),
                 ),
           const KDivider(),
@@ -85,7 +87,7 @@ class DepartingScreen extends StatelessWidget {
                   child: Align(
                     alignment: Alignment.centerRight,
                     child: Text(
-                      data.nextStationAr,
+                      nxtAr,
                       textAlign: TextAlign.right,
                       style: const TextStyle(
                         color: kAccent,
@@ -96,7 +98,7 @@ class DepartingScreen extends StatelessWidget {
                   ),
                 )
               : Text(
-                  data.nextStationFr,
+                  nxtFr,
                   style: const TextStyle(
                     color: kAccent,
                     fontSize: 22,
@@ -121,10 +123,7 @@ class DepartingScreen extends StatelessWidget {
                     child: Text(
                       data.destinationAr,
                       textAlign: TextAlign.right,
-                      style: const TextStyle(
-                        color: kSecondary,
-                        fontSize: 18,
-                      ),
+                      style: const TextStyle(color: kSecondary, fontSize: 18),
                     ),
                   ),
                 )

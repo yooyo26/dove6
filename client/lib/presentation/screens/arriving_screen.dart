@@ -15,9 +15,13 @@ class ArrivingScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final int curIdx = data.routeStations.isEmpty
-        ? 0
-        : data.routeStations.indexOf(data.currentStation).clamp(0, data.routeStations.length - 1);
+    final int curIdx = data.currentStationIdx;
+    final String nxtFr = data.nextStation?.nameFr ?? '';
+    final String nxtAr = data.nextStation?.nameAr ?? '';
+
+    final List<String> stationNames = data.stations
+        .map((s) => isArabic ? s.nameAr : s.nameFr)
+        .toList();
 
     return ScreenScaffold(
       child: Column(
@@ -32,7 +36,7 @@ class ArrivingScreen extends StatelessWidget {
                 style: const TextStyle(color: kSecondary, fontSize: 14),
               ),
               const SizedBox(width: 12),
-              AudioSyncBadge(activeAudioLang: data.activeAudioLang),
+              AudioSyncBadge(isArabic: isArabic),
             ],
           ),
           const Spacer(),
@@ -51,7 +55,7 @@ class ArrivingScreen extends StatelessWidget {
                   child: Align(
                     alignment: Alignment.centerRight,
                     child: Text(
-                      data.nextStationAr,
+                      nxtAr,
                       textAlign: TextAlign.right,
                       style: const TextStyle(
                         color: kAccent,
@@ -63,7 +67,7 @@ class ArrivingScreen extends StatelessWidget {
                   ),
                 )
               : Text(
-                  data.nextStationFr,
+                  nxtFr,
                   style: const TextStyle(
                     color: kAccent,
                     fontSize: 52,
@@ -76,7 +80,7 @@ class ArrivingScreen extends StatelessWidget {
             height: 60,
             child: CustomPaint(
               painter: RouteProgressPainter(
-                stations:            data.routeStations,
+                stations:            stationNames,
                 progress:            data.routeProgress,
                 currentStationIndex: curIdx,
               ),
@@ -101,10 +105,7 @@ class ArrivingScreen extends StatelessWidget {
                     child: Text(
                       data.destinationAr,
                       textAlign: TextAlign.right,
-                      style: const TextStyle(
-                        color: kSecondary,
-                        fontSize: 18,
-                      ),
+                      style: const TextStyle(color: kSecondary, fontSize: 18),
                     ),
                   ),
                 )

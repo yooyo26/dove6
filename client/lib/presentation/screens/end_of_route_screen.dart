@@ -15,6 +15,11 @@ class EndOfRouteScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final List<String> stationNames = data.stations
+        .map((s) => isArabic ? s.nameAr : s.nameFr)
+        .toList();
+    final int lastIdx = data.stations.isEmpty ? 0 : data.stations.length - 1;
+
     return ScreenScaffold(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -23,7 +28,7 @@ class EndOfRouteScreen extends StatelessWidget {
             children: [
               TrainIdChip(trainId: data.trainId),
               const Spacer(),
-              AudioSyncBadge(activeAudioLang: data.activeAudioLang),
+              AudioSyncBadge(isArabic: isArabic),
             ],
           ),
           const Spacer(),
@@ -91,9 +96,9 @@ class EndOfRouteScreen extends StatelessWidget {
             height: 60,
             child: CustomPaint(
               painter: RouteProgressPainter(
-                stations:            data.routeStations,
+                stations:            stationNames,
                 progress:            1.0,
-                currentStationIndex: data.routeStations.isEmpty ? 0 : data.routeStations.length - 1,
+                currentStationIndex: lastIdx,
               ),
               size: Size.infinite,
             ),

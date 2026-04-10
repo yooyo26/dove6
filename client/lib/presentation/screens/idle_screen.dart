@@ -11,7 +11,7 @@ class IdleScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final now = data.timestamp;
+    final now  = DateTime.now();
     final time =
         '${now.hour.toString().padLeft(2, '0')}:${now.minute.toString().padLeft(2, '0')}';
     final date =
@@ -25,7 +25,7 @@ class IdleScreen extends StatelessWidget {
             children: [
               TrainIdChip(trainId: data.trainId),
               const Spacer(),
-              AudioSyncBadge(activeAudioLang: data.activeAudioLang),
+              AudioSyncBadge(isArabic: isArabic),
             ],
           ),
           const Spacer(),

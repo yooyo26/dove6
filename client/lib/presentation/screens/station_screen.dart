@@ -11,11 +11,18 @@ class StationScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final bool hasRoute = data.routeStations.isNotEmpty;
-    final bool isFinal = hasRoute && data.currentStation == data.destination;
-    final int curIdx = hasRoute
-        ? data.routeStations.indexOf(data.currentStation).clamp(0, data.routeStations.length - 1)
-        : 0;
+    final bool hasRoute = data.stations.isNotEmpty;
+    final bool isFinal  = hasRoute && data.currentStationIdx >= data.stations.length - 1;
+    final int  curIdx   = data.currentStationIdx;
+
+    final String curFr  = data.currentStation?.nameFr ?? '';
+    final String curAr  = data.currentStation?.nameAr ?? '';
+    final String nxtFr  = data.nextStation?.nameFr ?? '';
+    final String nxtAr  = data.nextStation?.nameAr ?? '';
+
+    final List<String> stationNames = data.stations
+        .map((s) => isArabic ? s.nameAr : s.nameFr)
+        .toList();
 
     return ScreenScaffold(
       child: Column(
@@ -36,7 +43,7 @@ class StationScreen extends StatelessWidget {
                 ),
               ],
               const Spacer(),
-              AudioSyncBadge(activeAudioLang: data.activeAudioLang),
+              AudioSyncBadge(isArabic: isArabic),
             ],
           ),
           const Spacer(),
@@ -55,7 +62,7 @@ class StationScreen extends StatelessWidget {
                   child: Align(
                     alignment: Alignment.centerRight,
                     child: Text(
-                      data.currentStationAr,
+                      curAr,
                       textAlign: TextAlign.right,
                       style: const TextStyle(
                         color: kPrimary,
@@ -66,7 +73,7 @@ class StationScreen extends StatelessWidget {
                   ),
                 )
               : Text(
-                  data.currentStationFr,
+                  curFr,
                   style: const TextStyle(
                     color: kPrimary,
                     fontSize: 48,
@@ -90,7 +97,7 @@ class StationScreen extends StatelessWidget {
                     child: Align(
                       alignment: Alignment.centerRight,
                       child: Text(
-                        data.nextStationAr,
+                        nxtAr,
                         textAlign: TextAlign.right,
                         style: const TextStyle(
                           color: kAccent,
@@ -101,7 +108,7 @@ class StationScreen extends StatelessWidget {
                     ),
                   )
                 : Text(
-                    data.nextStationFr,
+                    nxtFr,
                     style: const TextStyle(
                       color: kAccent,
                       fontSize: 22,
@@ -126,10 +133,7 @@ class StationScreen extends StatelessWidget {
                       child: Text(
                         data.destinationAr,
                         textAlign: TextAlign.right,
-                        style: const TextStyle(
-                          color: kSecondary,
-                          fontSize: 18,
-                        ),
+                        style: const TextStyle(color: kSecondary, fontSize: 18),
                       ),
                     ),
                   )
@@ -155,7 +159,7 @@ class StationScreen extends StatelessWidget {
             height: 60,
             child: CustomPaint(
               painter: RouteProgressPainter(
-                stations:            data.routeStations,
+                stations:            stationNames,
                 progress:            data.routeProgress,
                 currentStationIndex: curIdx,
               ),

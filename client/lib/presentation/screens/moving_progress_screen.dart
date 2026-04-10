@@ -15,26 +15,28 @@ class MovingProgressScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final bool hasRoute = data.routeStations.isNotEmpty;
-    final int curIdx = hasRoute
-        ? data.routeStations.indexOf(data.currentStation).clamp(0, data.routeStations.length - 1)
-        : 0;
-    final int stNum   = curIdx + 1;
-    final int total   = hasRoute ? data.routeStations.length : 0;
-    final int activePd = (data.routeProgress * 5).round().clamp(0, 5);
+    final bool hasRoute   = data.stations.isNotEmpty;
+    final int  curIdx     = data.currentStationIdx;
+    final int  stNum      = curIdx + 1;
+    final int  total      = hasRoute ? data.stations.length : 0;
+    final int  activePd   = (data.routeProgress * 5).round().clamp(0, 5);
 
     final String curStation = isArabic
-        ? data.currentStationAr
-        : data.currentStationFr;
+        ? (data.currentStation?.nameAr ?? '')
+        : (data.currentStation?.nameFr ?? '');
     final String nxtStation = isArabic
-        ? data.nextStationAr
-        : data.nextStationFr;
-    final String origin = isArabic
-        ? (data.routeStationsAr.isEmpty ? '' : data.routeStationsAr.first)
-        : (data.routeStationsFr.isEmpty ? '' : data.routeStationsFr.first);
-    final String destination = isArabic
-        ? (data.routeStationsAr.isEmpty ? '' : data.routeStationsAr.last)
-        : (data.routeStationsFr.isEmpty ? '' : data.routeStationsFr.last);
+        ? (data.nextStation?.nameAr ?? '')
+        : (data.nextStation?.nameFr ?? '');
+
+    final String origin = hasRoute
+        ? (isArabic ? data.stations.first.nameAr : data.stations.first.nameFr)
+        : '';
+    final String destination = isArabic ? data.destinationAr : data.destinationFr;
+
+    final List<String> stationNames = data.stations
+        .map((s) => isArabic ? s.nameAr : s.nameFr)
+        .toList();
+
     final String approachLabel = isArabic ? 'اقتراب' : 'Approche';
     final String currentLabel  = isArabic ? 'المحطة الحالية' : 'ARRÊT ACTUEL';
     final String nextLabel     = isArabic ? 'المحطة القادمة' : 'PROCHAIN ARRÊT';
@@ -62,8 +64,7 @@ class MovingProgressScreen extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(width: 12),
-                  AudioSyncBadge(
-                      activeAudioLang: data.activeAudioLang),
+                  AudioSyncBadge(isArabic: isArabic),
                 ],
               ),
             ],
@@ -71,12 +72,12 @@ class MovingProgressScreen extends StatelessWidget {
 
           const SizedBox(height: 32),
 
-          // ── TRACK — all dots, no orange line ──────────────
+          // ── TRACK ────────────────────────────────────────
           SizedBox(
             height: 60,
             child: CustomPaint(
               painter: RouteProgressPainter(
-                stations:            data.routeStations,
+                stations:            stationNames,
                 progress:            data.routeProgress,
                 currentStationIndex: curIdx,
               ),
@@ -84,12 +85,11 @@ class MovingProgressScreen extends StatelessWidget {
             ),
           ),
 
-          // ── DIVIDER ───────────────────────────────────────
           const SizedBox(height: 20),
           const Divider(color: kBorder, thickness: 1.5, height: 1),
           const SizedBox(height: 20),
 
-          // ── INFO ZONE top row ─────────────────────────────
+          // ── INFO ZONE ─────────────────────────────────────
           Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [

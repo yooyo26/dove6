@@ -12,6 +12,7 @@ import (
 func main() {
 	// Load route from routes.json
 	activeRoute = loadRoute()
+	buildStationIndex()
 	fillJourney()
 	setupRoutes()
 

@@ -1,10 +1,31 @@
 {
-  "active_route": "casa_marrakech",
+  "active_route": "marrakech_tanger",
   "routes": {
     "marrakech_tanger": {
       "name": "Marrakech → Tanger Ville",
+      "route_id": "f47ac10b-58cc-4372-a567-0e02b2c3d479",
       "destination": "Tanger Ville",
-      "destination_ar": "طنجة المدينة",
+      "destination_ar": "طنجة اvلمدينة",
+      "station_ids": [
+        "c1076a25-0b19-4300-a84a-5fe47f5db401",
+        "c1076a25-0b19-4300-a84a-5fe47f5db402",
+        "c1076a25-0b19-4300-a84a-5fe47f5db403",
+        "c1076a25-0b19-4300-a84a-5fe47f5db404",
+        "c1076a25-0b19-4300-a84a-5fe47f5db405",
+        "c1076a25-0b19-4300-a84a-5fe47f5db406",
+        "c1076a25-0b19-4300-a84a-5fe47f5db407",
+        "c1076a25-0b19-4300-a84a-5fe47f5db408",
+        "c1076a25-0b19-4300-a84a-5fe47f5db409",
+        "c1076a25-0b19-4300-a84a-5fe47f5db40a",
+        "c1076a25-0b19-4300-a84a-5fe47f5db40b",
+        "c1076a25-0b19-4300-a84a-5fe47f5db40c",
+        "c1076a25-0b19-4300-a84a-5fe47f5db40d",
+        "c1076a25-0b19-4300-a84a-5fe47f5db40e",
+        "c1076a25-0b19-4300-a84a-5fe47f5db40f",
+        "c1076a25-0b19-4300-a84a-5fe47f5db410",
+        "c1076a25-0b19-4300-a84a-5fe47f5db411",
+        "c1076a25-0b19-4300-a84a-5fe47f5db412"
+      ],
       "stations_fr": [
         "Marrakech", "Youssoufia", "Benguerir", "Settat",
         "El Jadida", "Casa Oasis", "Casa Voyageurs",
@@ -26,8 +47,18 @@
     },
     "casa_fes": {
       "name": "Casa Voyageurs → Fès",
+      "route_id": "d2187b36-1c2a-4400-b95b-6af58a6ec5f0",
       "destination": "Fès",
       "destination_ar": "فاس",
+      "station_ids": [
+        "d2187b36-1c2a-4400-b95b-6af58a6ec501",
+        "d2187b36-1c2a-4400-b95b-6af58a6ec502",
+        "d2187b36-1c2a-4400-b95b-6af58a6ec503",
+        "d2187b36-1c2a-4400-b95b-6af58a6ec504",
+        "d2187b36-1c2a-4400-b95b-6af58a6ec505",
+        "d2187b36-1c2a-4400-b95b-6af58a6ec506",
+        "d2187b36-1c2a-4400-b95b-6af58a6ec507"
+      ],
       "stations_fr": [
         "Casa Voyageurs", "Rabat Agdal", "Rabat Ville",
         "Salé Ville", "Kénitra", "Meknès", "Fès"
@@ -40,8 +71,15 @@
     },
     "casa_marrakech": {
       "name": "Casa Voyageurs → Marrakech",
+      "route_id": "e3298c47-2d3b-4500-c06c-7bf69b7fd6e0",
       "destination": "Marrakech",
       "destination_ar": "مراكش",
+      "station_ids": [
+        "e3298c47-2d3b-4500-c06c-7bf69b7fd601",
+        "e3298c47-2d3b-4500-c06c-7bf69b7fd602",
+        "e3298c47-2d3b-4500-c06c-7bf69b7fd603",
+        "e3298c47-2d3b-4500-c06c-7bf69b7fd604"
+      ],
       "stations_fr": [
         "Casa Voyageurs", "Settat", "Benguerir", "Marrakech"
       ],

@@ -1,202 +1,94 @@
-// Core data snapshot — everything any screen needs
+// Core data snapshot — exactly what the server sends, nothing more
 import 'train_state.dart';
-import 'language.dart';
+import 'station.dart';
 
 class DisplayData {
-  final TrainState state;
-  final String trainId;
-  final String currentStation;
-  final String nextStation;
-  final String destination;
-  final double speedKmh;
-  final double routeProgress; // 0.0 to 1.0
-  final List<String> routeStations;
-  final DateTime timestamp;
+  // ── Server-provided fields ────────────────────────────────────────────────
+  final TrainState    state;
+  final double        speedKmh;          // from /data/speed
+  final double        routeProgress;     // ratio / 100.0 from /data/distance-ratio
+  final int           currentStationIdx; // start_station_index from /data/current-route
+  final bool          isInReverse;       // from /data/current-route
+  final String        routeId;           // from /data/current-route
+  final List<Station> stations;          // resolved from /data/stations-in-route + /data/station-info
+  final String        destinationFr;     // last station nameFr (or first if isInReverse)
+  final String        destinationAr;     // last station nameAr (or first if isInReverse)
+  final int           passengerCount;    // from /sensors/human-counter
+  // isArabic: raw from /audio-state every poll.
+  // DisplayMapper applies it ONLY on state transitions — never mid-screen.
+  final bool          isArabic;
 
-  // French translations
-  final String currentStationFr;
-  final String nextStationFr;
-  final String destinationFr;
-  final List<String> routeStationsFr;
-
-  // Arabic translations
-  final String currentStationAr;
-  final String nextStationAr;
-  final String destinationAr;
-  final List<String> routeStationsAr;
-
-  // Messages from server in all 3 languages
-  final String messageEn;
-  final String messageFr;
-  final String messageAr;
-
-  // Audio sync — which language speaker is announcing
-  // Values: "en" "fr" "ar" or "" for silence
-  final String activeAudioLang;
-  final String audioFile;
-
-  // Passenger count from NVR (0 = not available)
-  final int passengerCount;
+  // ── Deployment constant — needed by all screen headers ───────────────────
+  final String        trainId;
 
   const DisplayData({
     required this.state,
-    required this.trainId,
-    required this.currentStation,
-    required this.nextStation,
-    required this.destination,
     required this.speedKmh,
     required this.routeProgress,
-    required this.routeStations,
-    required this.timestamp,
-    this.currentStationFr = '',
-    this.nextStationFr = '',
-    this.destinationFr = '',
-    this.routeStationsFr = const [],
-    this.currentStationAr = '',
-    this.nextStationAr = '',
-    this.destinationAr = '',
-    this.routeStationsAr = const [],
-    this.messageEn = '',
-    this.messageFr = '',
-    this.messageAr = '',
-    this.activeAudioLang = '',
-    this.audioFile = '',
-    this.passengerCount = 0,
+    required this.currentStationIdx,
+    required this.isInReverse,
+    required this.routeId,
+    required this.stations,
+    required this.destinationFr,
+    required this.destinationAr,
+    required this.passengerCount,
+    required this.isArabic,
+    required this.trainId,
   });
 
-  DisplayData copyWith({
-    TrainState? state,
-    String? trainId,
-    String? currentStation,
-    String? nextStation,
-    String? destination,
-    double? speedKmh,
-    double? routeProgress,
-    List<String>? routeStations,
-    DateTime? timestamp,
-    String? currentStationFr,
-    String? nextStationFr,
-    String? destinationFr,
-    List<String>? routeStationsFr,
-    String? currentStationAr,
-    String? nextStationAr,
-    String? destinationAr,
-    List<String>? routeStationsAr,
-    String? messageEn,
-    String? messageFr,
-    String? messageAr,
-    String? activeAudioLang,
-    String? audioFile,
-    int? passengerCount,
-  }) {
-    return DisplayData(
-      state: state ?? this.state,
-      trainId: trainId ?? this.trainId,
-      currentStation: currentStation ?? this.currentStation,
-      nextStation: nextStation ?? this.nextStation,
-      destination: destination ?? this.destination,
-      speedKmh: speedKmh ?? this.speedKmh,
-      routeProgress: routeProgress ?? this.routeProgress,
-      routeStations: routeStations ?? this.routeStations,
-      timestamp: timestamp ?? this.timestamp,
-      currentStationFr: currentStationFr ?? this.currentStationFr,
-      nextStationFr: nextStationFr ?? this.nextStationFr,
-      destinationFr: destinationFr ?? this.destinationFr,
-      routeStationsFr: routeStationsFr ?? this.routeStationsFr,
-      currentStationAr: currentStationAr ?? this.currentStationAr,
-      nextStationAr: nextStationAr ?? this.nextStationAr,
-      destinationAr: destinationAr ?? this.destinationAr,
-      routeStationsAr: routeStationsAr ?? this.routeStationsAr,
-      messageEn: messageEn ?? this.messageEn,
-      messageFr: messageFr ?? this.messageFr,
-      messageAr: messageAr ?? this.messageAr,
-      activeAudioLang: activeAudioLang ?? this.activeAudioLang,
-      audioFile: audioFile ?? this.audioFile,
-      passengerCount: passengerCount ?? this.passengerCount,
-    );
+  // ── Computed helpers for screens ─────────────────────────────────────────
+  Station? get currentStation {
+    if (stations.isEmpty) return null;
+    return stations[currentStationIdx.clamp(0, stations.length - 1)];
   }
 
-  // Blank starting state — all route data comes from the server.
-  // No station names or route lists live in the client.
-  static DisplayData initial() => DisplayData(
-    state: TrainState.idle,
-    trainId: '',
-    currentStation: '',
-    nextStation: '',
-    destination: '',
-    speedKmh: 0,
-    routeProgress: 0,
-    routeStations: const [],
-    timestamp: DateTime.now(),
-    currentStationFr: '',
-    nextStationFr: '',
-    destinationFr: '',
-    routeStationsFr: const [],
-    currentStationAr: '',
-    nextStationAr: '',
-    destinationAr: '',
-    routeStationsAr: const [],
-    messageEn: '',
-    messageFr: '',
-    messageAr: '',
-    activeAudioLang: '',
-    audioFile: '',
+  Station? get nextStation {
+    if (stations.isEmpty) return null;
+    final nxt = currentStationIdx + 1;
+    return stations[nxt.clamp(0, stations.length - 1)];
+  }
+
+  // ── Initial placeholder — used before first server response ──────────────
+  static DisplayData initial([String trainId = '']) => DisplayData(
+    state:             TrainState.idle,
+    speedKmh:          0,
+    routeProgress:     0,
+    currentStationIdx: 0,
+    isInReverse:       false,
+    routeId:           '',
+    stations:          const [],
+    destinationFr:     '',
+    destinationAr:     '',
+    passengerCount:    0,
+    isArabic:          false,
+    trainId:           trainId,
   );
 
-  // Returns station name in the requested language.
-  // Falls back to base name if translation is empty.
-  String currentStationIn(DisplayLanguage lang) {
-    switch (lang) {
-      case DisplayLanguage.fr:
-        return currentStationFr.isEmpty ? currentStation : currentStationFr;
-      case DisplayLanguage.ar:
-        return currentStationAr.isEmpty ? currentStation : currentStationAr;
-    }
-  }
-
-  String nextStationIn(DisplayLanguage lang) {
-    switch (lang) {
-      case DisplayLanguage.fr:
-        return nextStationFr.isEmpty ? nextStation : nextStationFr;
-      case DisplayLanguage.ar:
-        return nextStationAr.isEmpty ? nextStation : nextStationAr;
-    }
-  }
-
-  String destinationIn(DisplayLanguage lang) {
-    switch (lang) {
-      case DisplayLanguage.fr:
-        return destinationFr.isEmpty ? destination : destinationFr;
-      case DisplayLanguage.ar:
-        return destinationAr.isEmpty ? destination : destinationAr;
-    }
-  }
-
-  List<String> routeStationsIn(DisplayLanguage lang) {
-    switch (lang) {
-      case DisplayLanguage.fr:
-        return routeStationsFr.isEmpty ? routeStations : routeStationsFr;
-      case DisplayLanguage.ar:
-        return routeStationsAr.isEmpty ? routeStations : routeStationsAr;
-    }
-  }
-
-  String messageIn(DisplayLanguage lang) {
-    switch (lang) {
-      case DisplayLanguage.fr:
-        return messageFr.isEmpty ? messageEn : messageFr;
-      case DisplayLanguage.ar:
-        return messageAr.isEmpty ? messageEn : messageAr;
-    }
-  }
-
-  // Returns the language the display should follow.
-  // When audio is playing the display syncs to it.
-  // When silent the display shows all 3 languages.
-  DisplayLanguage get syncedLanguage {
-    if (activeAudioLang.isEmpty) return DisplayLanguage.fr;
-    return DisplayLanguageExt.fromCode(activeAudioLang);
-  }
-
-  bool get isAudioSynced => activeAudioLang.isNotEmpty;
+  DisplayData copyWith({
+    TrainState?    state,
+    double?        speedKmh,
+    double?        routeProgress,
+    int?           currentStationIdx,
+    bool?          isInReverse,
+    String?        routeId,
+    List<Station>? stations,
+    String?        destinationFr,
+    String?        destinationAr,
+    int?           passengerCount,
+    bool?          isArabic,
+    String?        trainId,
+  }) => DisplayData(
+    state:             state             ?? this.state,
+    speedKmh:          speedKmh          ?? this.speedKmh,
+    routeProgress:     routeProgress     ?? this.routeProgress,
+    currentStationIdx: currentStationIdx ?? this.currentStationIdx,
+    isInReverse:       isInReverse       ?? this.isInReverse,
+    routeId:           routeId           ?? this.routeId,
+    stations:          stations          ?? this.stations,
+    destinationFr:     destinationFr     ?? this.destinationFr,
+    destinationAr:     destinationAr     ?? this.destinationAr,
+    passengerCount:    passengerCount    ?? this.passengerCount,
+    isArabic:          isArabic          ?? this.isArabic,
+    trainId:           trainId           ?? this.trainId,
+  );
 }

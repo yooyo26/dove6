@@ -2,7 +2,7 @@ package main
 
 import "time"
 
-const stepDuration = 15 * time.Second
+const stepDuration = 5 * time.Second
 
 type Step struct {
 	State             string   `json:"state"`
@@ -45,7 +45,7 @@ var journey = []Step{
 		SpeedKmh: 0, RouteProgress: 0.00,
 		MessageFr:       "Bienvenue",
 		MessageAr:       "مرحباً",
-		ActiveAudioLang: "", AudioFile: "",
+		ActiveAudioLang: "default", AudioFile: "",
 	},
 
 	// ── ROUTE SELECTED ───────────────────────────────────

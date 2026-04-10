@@ -41,6 +41,8 @@ func toNvrState(s string) string {
 		return "operating_state_departing"
 	case "MOVING":
 		return "operating_state_moving"
+	case "COASTING":
+		return "operating_state_coasting"
 	case "ARRIVING":
 		return "operating_state_arriving"
 	case "END_OF_ROUTE":
@@ -64,6 +66,8 @@ func toAudioAction(lang string) string {
 		return "playing_french_audio"
 	case "en":
 		return "playing_english_audio"
+	case "default":
+		return "playing_default_audio"
 	default:
 		return "no_audio_is_playing"
 	}
@@ -130,7 +134,7 @@ func setupRoutes() {
 		step := currentStepData()
 		stationIdx := currentStationIndex(step)
 		json.NewEncoder(w).Encode(map[string]interface{}{
-			"route_id":            "dove6-route-001",
+			"route_id":            activeRoute.RouteID,
 			"is_in_reverse":       false,
 			"start_station_index": stationIdx,
 		})
@@ -140,31 +144,23 @@ func setupRoutes() {
 	http.HandleFunc("/data/stations-in-route/", func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
 		w.Header().Set("Access-Control-Allow-Origin", "*")
-		ids := make([]string, len(activeRoute.StationsFr))
-		for i := range activeRoute.StationsFr {
-			ids[i] = fmt.Sprintf("st-%03d", i+1)
-		}
-		json.NewEncoder(w).Encode(ids)
+		json.NewEncoder(w).Encode(activeRoute.StationIDs)
 	})
 
 	// GET /data/station-info/{station_id}
 	http.HandleFunc("/data/station-info/", func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
 		w.Header().Set("Access-Control-Allow-Origin", "*")
-		path := r.URL.Path
-		parts := strings.Split(path, "/")
+		parts := strings.Split(r.URL.Path, "/")
 		idStr := parts[len(parts)-1]
-		idx := 0
-		fmt.Sscanf(idStr, "st-%d", &idx)
-		idx = idx - 1 // convert to 0-based
-		if idx < 0 || idx >= len(activeRoute.StationsFr) {
+		idx, ok := stationIDIndex[idStr]
+		if !ok {
 			http.Error(w, "station not found", http.StatusNotFound)
 			return
 		}
 		json.NewEncoder(w).Encode(map[string]string{
-			"display_name":    strings.ToLower(activeRoute.StationsFr[idx]),
+			"display_name":    strings.ToLower(strings.ReplaceAll(activeRoute.StationsFr[idx], " ", "_")),
 			"display_name_fr": activeRoute.StationsFr[idx],
-			"display_name_en": activeRoute.StationsFr[idx],
 			"display_name_ar": activeRoute.StationsAr[idx],
 		})
 	})

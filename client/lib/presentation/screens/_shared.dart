@@ -239,23 +239,15 @@ class RouteProgressPainter extends CustomPainter {
 }
 
 // ── AudioSyncBadge ────────────────────────────────────────────────────────────
+// Shows an Arabic audio indicator when isArabic is true; hidden otherwise.
 class AudioSyncBadge extends StatelessWidget {
-  final String activeAudioLang;
+  final bool isArabic;
 
-  const AudioSyncBadge({
-    super.key,
-    required this.activeAudioLang,
-  });
+  const AudioSyncBadge({super.key, required this.isArabic});
 
   @override
   Widget build(BuildContext context) {
-    if (activeAudioLang.isEmpty) return const SizedBox.shrink();
-
-    final label = switch (activeAudioLang) {
-      'fr' => 'FR',
-      'ar' => 'ع',
-      _    => 'EN',
-    };
+    if (!isArabic) return const SizedBox.shrink();
 
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
@@ -263,22 +255,17 @@ class AudioSyncBadge extends StatelessWidget {
         color: kAccent,
         borderRadius: BorderRadius.circular(4),
       ),
-      child: Row(
+      child: const Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          const Icon(
-            Icons.volume_up_rounded,
-            size: 12,
-            color: Colors.white,
-          ),
-          const SizedBox(width: 4),
+          Icon(Icons.volume_up_rounded, size: 12, color: Colors.white),
+          SizedBox(width: 4),
           Text(
-            label,
-            style: const TextStyle(
+            'ع',
+            style: TextStyle(
               color: Colors.white,
               fontSize: 11,
               fontWeight: FontWeight.w700,
-              letterSpacing: 1,
             ),
           ),
         ],

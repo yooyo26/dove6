@@ -47,18 +47,20 @@ class _DisplayMapperState extends State<DisplayMapper> {
     final TrainState newState = data.state;
     final TrainState? oldState = _prevState;
 
-    // State changed — read language from server package
-    // Arabic only when server explicitly says "ar"
+    // State changed — lock language for incoming screen.
+    // isArabic is polled every tick in NvrDataService; we apply it here only
+    // on state transitions so the language never switches mid-screen.
     if (newState != oldState) {
-      _isArabic = data.activeAudioLang == 'ar';
+      _isArabic = data.isArabic;
     }
 
     setState(() {
       _data = data;
 
-      // entering moving/coasting: show speed phase for 5 seconds then progress
-      final bool isMovingState = newState == TrainState.moving || newState == TrainState.coasting;
-      final bool wasMovingState = oldState == TrainState.moving || oldState == TrainState.coasting;
+      // entering moving: show speed phase for 5 seconds then progress
+      // coasting is mapped to moving at parse layer — no separate case needed here
+      final bool isMovingState  = newState == TrainState.moving;
+      final bool wasMovingState = oldState == TrainState.moving;
       if (isMovingState && !wasMovingState) {
         _showSpeedPhase = true;
         _speedTimer?.cancel();
@@ -136,13 +138,13 @@ class _DisplayMapperState extends State<DisplayMapper> {
       case TrainState.atStation:
         if (_showArrivedMessage) {
           return ArrivedMessageScreen(
-            key: ValueKey('arrived-${_data.currentStation}'),
+            key: ValueKey('arrived-${_data.currentStationIdx}'),
             data: _data,
             isArabic: _isArabic,
           );
         }
         return StationScreen(
-          key: ValueKey('station-${_data.currentStation}'),
+          key: ValueKey('station-${_data.currentStationIdx}'),
           data: _data,
           isArabic: _isArabic,
         );
@@ -153,7 +155,6 @@ class _DisplayMapperState extends State<DisplayMapper> {
           isArabic: _isArabic,
         );
       case TrainState.moving:
-      case TrainState.coasting:
         if (_showSpeedPhase) {
           return MovingSpeedScreen(
             key: const ValueKey('movingSpeed'),

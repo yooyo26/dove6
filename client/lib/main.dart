@@ -14,7 +14,7 @@ const bool useLocalSimulation = false;
 // Base URL of the NVR server.
 //   dove6_server (dev)  → 'http://127.0.0.1:8080'
 //   real NVR (R6S)      → 'http://192.168.1.50:3002/v0'
-const String nvrBaseUrl = 'http://127.0.0.1:8080';
+const String nvrBaseUrl = 'http://172.24.113.237:8080';
 
 // Train identifier sent by the NVR — shown in every screen header chip.
 // Change this per deployment to match the physical train unit.
