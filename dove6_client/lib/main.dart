@@ -8,11 +8,17 @@ import 'presentation/display_mapper.dart';
 
 // ── Configuration ─────────────────────────────────────────────────────────────
 // Set to true  → uses local fake simulation (no server needed)
-// Set to false → polls the Go server at nvrIp
+// Set to false → polls the Go server at _apiBaseUrl
 const bool useLocalSimulation = false;
 
-// Your laptop IP address on WSL. Find it with: ip addr | grep "inet "
-const String nvrIp = '127.0.0.1';
+// Base URL of the Go NVR server.
+// Override at build time:  --dart-define=API_BASE_URL=http://192.168.137.1:8080
+// Board connects to the Windows Ethernet IP (192.168.137.1), NOT to localhost
+// or the WSL-internal IP, because the server runs inside WSL on the dev machine.
+const String _apiBaseUrl = String.fromEnvironment(
+  'API_BASE_URL',
+  defaultValue: 'http://192.168.137.1:8080',
+);
 // ─────────────────────────────────────────────────────────────────────────────
 
 void main() {
@@ -35,7 +41,7 @@ class _Dove6AppState extends State<Dove6App> {
     super.initState();
     _service = useLocalSimulation
         ? FakeDataService()
-        : NvrDataService(nvrIp: nvrIp);
+        : NvrDataService(baseUrl: _apiBaseUrl);
     _service.start();
   }
 

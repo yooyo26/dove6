@@ -8,7 +8,7 @@ import '../domain/train_state.dart';
 import 'data_service.dart';
 
 class NvrDataService implements DataService {
-  final String nvrIp;
+  final String baseUrl;
   final _controller = StreamController<DisplayData>.broadcast();
 
   @override
@@ -16,7 +16,7 @@ class NvrDataService implements DataService {
 
   Timer? _timer;
 
-  NvrDataService({required this.nvrIp});
+  NvrDataService({required this.baseUrl});
 
   @override
   void start() {
@@ -27,7 +27,7 @@ class NvrDataService implements DataService {
   Future<void> _fetchAndEmit() async {
     try {
       final response = await http
-          .get(Uri.parse('http://$nvrIp:8080/state'))
+          .get(Uri.parse('$baseUrl/state'))
           .timeout(const Duration(seconds: 3));
       if (response.statusCode == 200) {
         final json = jsonDecode(response.body) as Map<String, dynamic>;

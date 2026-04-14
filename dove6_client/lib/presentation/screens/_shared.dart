@@ -1,16 +1,18 @@
 // Shared colours, scaffold, and reusable widgets used by all screens
+import 'dart:async';
 import 'package:flutter/material.dart';
+import '../../domain/display_data.dart';
 
 // ── Colour constants ──────────────────────────────────────────────────────────
-const kBg         = Color(0xFFE8E4DF); // warm light grey background
-const kSurface    = Color(0xFFD6CFC7); // slightly darker surface
+const kBg         = Color(0xFFE8E4DF); // warm beige — screen background
+const kSurface    = Color(0xFFD6CFC7); // lifted surface
 const kCard       = Color(0xFFD6CFC7); // card background
-const kBorder     = Color(0xFFC8C3BC); // subtle border
-const kPrimary    = Color(0xFF1A1A1A); // near black — main text
-const kSecondary  = Color(0xFF5F5E5A); // muted grey — labels
-const kAccent     = Color(0xFFE8650A); // orange — stations, highlights
-const kAccentGold = Color(0xFF333333); // dark grey — speed number
-const kDim        = Color(0xFFBFB9B1); // very subtle — track, dividers
+const kBorder     = Color(0xFFC8C3BC); // subtle border / track base
+const kPrimary    = Color(0xFF1A1A1A); // near-black — main text
+const kSecondary  = Color(0xFF5F5E5A); // muted — labels / next station
+const kAccent     = Color(0xFFE8650A); // ONCF orange — highlights / current
+const kAccentGold = Color(0xFF333333); // dark grey
+const kDim        = Color(0xFFBFB9B1); // very subtle — anchors / future dots
 
 // ── ScreenScaffold ────────────────────────────────────────────────────────────
 class ScreenScaffold extends StatelessWidget {
@@ -108,108 +110,315 @@ class KDivider extends StatelessWidget {
   }
 }
 
+// ── ClockWidget ───────────────────────────────────────────────────────────────
+class ClockWidget extends StatefulWidget {
+  const ClockWidget({super.key});
+
+  @override
+  State<ClockWidget> createState() => _ClockWidgetState();
+}
+
+class _ClockWidgetState extends State<ClockWidget> {
+  Timer? _timer;
+  bool _colonVisible = true;
+  DateTime _now = DateTime.now();
+
+  @override
+  void initState() {
+    super.initState();
+    _timer = Timer.periodic(const Duration(milliseconds: 500), (_) {
+      setState(() {
+        _colonVisible = !_colonVisible;
+        _now = DateTime.now();
+      });
+    });
+  }
+
+  @override
+  void dispose() {
+    _timer?.cancel();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final h = _now.hour.toString().padLeft(2, '0');
+    final m = _now.minute.toString().padLeft(2, '0');
+    return Text.rich(
+      TextSpan(
+        style: const TextStyle(
+          fontSize: 48,
+          fontWeight: FontWeight.w400,
+          color: kPrimary,
+          fontFeatures: [FontFeature.tabularFigures()],
+        ),
+        children: [
+          TextSpan(text: h),
+          TextSpan(
+            text: ':',
+            style: TextStyle(
+              color: kPrimary.withValues(alpha: _colonVisible ? 1.0 : 0.2),
+            ),
+          ),
+          TextSpan(text: m),
+        ],
+      ),
+    );
+  }
+}
+
+// ── SharedHeader ──────────────────────────────────────────────────────────────
+class SharedHeader extends StatelessWidget {
+  final DisplayData data;
+  final bool isArabic;
+
+  const SharedHeader({
+    super.key,
+    required this.data,
+    required this.isArabic,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Container(
+          height: 72,
+          color: kBg,
+          padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 12),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              // ── Left: ONCF | Z2M · trainId ───────────────────────────────
+              Row(
+                children: [
+                  const Text(
+                    'ONCF',
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.w700,
+                      color: kAccent,
+                      letterSpacing: 3,
+                    ),
+                  ),
+                  const SizedBox(width: 16),
+                  Container(width: 1, height: 24, color: kBorder),
+                  const SizedBox(width: 16),
+                  Text(
+                    'Z2M · ${data.trainId}',
+                    style: const TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600,
+                      color: kPrimary,
+                      letterSpacing: 1.5,
+                    ),
+                  ),
+                ],
+              ),
+              // ── Right: clock ──────────────────────────────────────────────
+              const ClockWidget(),
+            ],
+          ),
+        ),
+        const Divider(height: 1, thickness: 1, color: kBorder),
+      ],
+    );
+  }
+}
+
+// ── RouteConnector ────────────────────────────────────────────────────────────
+class RouteConnector extends StatelessWidget {
+  const RouteConnector({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        Container(
+          width: 16,
+          height: 16,
+          decoration: const BoxDecoration(
+            color: kAccent,
+            shape: BoxShape.circle,
+          ),
+        ),
+        const SizedBox(width: 12),
+        Container(
+          width: 144,
+          height: 6,
+          decoration: BoxDecoration(
+            color: kAccent,
+            borderRadius: BorderRadius.circular(3),
+          ),
+        ),
+        const SizedBox(width: 12),
+        const Icon(Icons.arrow_forward_rounded, color: kAccent, size: 28),
+      ],
+    );
+  }
+}
+
 // ── RouteProgressPainter ──────────────────────────────────────────────────────
+// Use inside a SizedBox(height: 90) in every screen.
+// currentStationIndex: data.routeStations.indexOf(data.currentStation)
+//                        .clamp(0, data.routeStations.length - 1)
 class RouteProgressPainter extends CustomPainter {
+  final List<String> stations;
   final double progress;
   final int currentStationIndex;
-  final List<String> stations;
+  final bool isArabic;
 
   const RouteProgressPainter({
+    required this.stations,
     required this.progress,
     required this.currentStationIndex,
-    required this.stations,
+    this.isArabic = false,
   });
 
   @override
   void paint(Canvas canvas, Size size) {
-    const double trackY = 16;
-    const double dotRadius = 7;
-    const double labelOffset = 28;
+    if (stations.isEmpty) return;
 
-    final trackPaint = Paint()
-      ..color = kDim
-      ..strokeWidth = 2
-      ..style = PaintingStyle.stroke;
+    // Track line sits at this Y — all dot centers are clamped to this value
+    const double trackY     = 26.0;
+    const double labelGap   = 8.0;
+    final int    lastIdx    = stations.length - 1;
+    final double totalWidth = size.width;
 
-    final progressPaint = Paint()
-      ..color = kAccent
-      ..strokeWidth = 2
-      ..style = PaintingStyle.stroke;
+    // ── Track background ───────────────────────────────────────────────────
+    canvas.drawLine(
+      const Offset(0, trackY),
+      Offset(totalWidth, trackY),
+      Paint()
+        ..color       = kBorder
+        ..strokeWidth = 6
+        ..strokeCap   = StrokeCap.round
+        ..style       = PaintingStyle.stroke,
+    );
 
-    // Draw full track
-    canvas.drawLine(Offset(0, trackY), Offset(size.width, trackY), trackPaint);
-
-    // Draw progress portion
+    // ── Track fill orange ──────────────────────────────────────────────────
     if (progress > 0) {
       canvas.drawLine(
-        Offset(0, trackY),
-        Offset(progress * size.width, trackY),
-        progressPaint,
+        const Offset(0, trackY),
+        Offset(progress * totalWidth, trackY),
+        Paint()
+          ..color       = kAccent
+          ..strokeWidth = 6
+          ..strokeCap   = StrokeCap.round
+          ..style       = PaintingStyle.stroke,
       );
     }
 
-    if (stations.isEmpty) return;
+    // ── Station dots & labels ──────────────────────────────────────────────
+    for (int i = 0; i <= lastIdx; i++) {
+      final double x = lastIdx == 0 ? totalWidth / 2 : i * totalWidth / lastIdx;
+      final center   = Offset(x, trackY); // node_center_y == track_center_y
 
-    final int lastIndex = stations.length - 1;
-
-    for (int i = 0; i <= lastIndex; i++) {
-      final double x = lastIndex == 0
-          ? size.width / 2
-          : i * size.width / lastIndex;
-      final Offset center = Offset(x, trackY);
-
-      final bool isPassed = i < currentStationIndex;
+      final bool isPassed  = i < currentStationIndex;
       final bool isCurrent = i == currentStationIndex;
+      final bool isNext    = i == currentStationIndex + 1;
+      // isFuture = (!isPassed && !isCurrent && !isNext)
 
       if (isCurrent) {
-        // Orange ring + filled dot
-        final ringPaint = Paint()
-          ..color = kAccent.withValues(alpha: 0.35)
-          ..style = PaintingStyle.stroke
-          ..strokeWidth = 2;
-        final fillPaint = Paint()
-          ..color = kAccent
-          ..style = PaintingStyle.fill;
-        canvas.drawCircle(center, dotRadius, fillPaint);
-        canvas.drawCircle(center, dotRadius + 3, ringPaint);
+        // Glow ring
+        canvas.drawCircle(
+          center,
+          18,
+          Paint()
+            ..color = kAccent.withValues(alpha: 0.15)
+            ..style = PaintingStyle.fill,
+        );
+        // Solid dot
+        canvas.drawCircle(
+          center,
+          12,
+          Paint()
+            ..color = kAccent
+            ..style = PaintingStyle.fill,
+        );
       } else if (isPassed) {
-        final paint = Paint()
-          ..color = kAccent.withValues(alpha: 0.5)
-          ..style = PaintingStyle.fill;
-        canvas.drawCircle(center, dotRadius, paint);
+        canvas.drawCircle(
+          center,
+          8,
+          Paint()
+            ..color = kAccent
+            ..style = PaintingStyle.fill,
+        );
+      } else if (isNext) {
+        canvas.drawCircle(center, 8, Paint()..color = kBg..style = PaintingStyle.fill);
+        canvas.drawCircle(
+          center,
+          8,
+          Paint()
+            ..color       = kAccent
+            ..style       = PaintingStyle.stroke
+            ..strokeWidth = 2.5,
+        );
       } else {
-        final paint = Paint()
-          ..color = kDim
-          ..style = PaintingStyle.fill;
-        canvas.drawCircle(center, dotRadius, paint);
+        // Future dot
+        canvas.drawCircle(center, 8, Paint()..color = kBg..style = PaintingStyle.fill);
+        canvas.drawCircle(
+          center,
+          8,
+          Paint()
+            ..color       = kBorder
+            ..style       = PaintingStyle.stroke
+            ..strokeWidth = 1.5,
+        );
       }
 
-      // Station label — matches dot color
-      final Color labelColor = isCurrent
-          ? kAccent
-          : isPassed
-              ? kAccent.withValues(alpha: 0.5)
-              : kDim;
+      // Labels: only current and next
+      if (isCurrent || isNext) {
+        final tp = TextPainter(
+          text: TextSpan(
+            text: stations[i],
+            style: TextStyle(
+              color:      isCurrent ? kAccent : kSecondary,
+              fontSize:   isCurrent ? 14 : 12,
+              fontWeight: isCurrent ? FontWeight.w700 : FontWeight.w500,
+            ),
+          ),
+          textDirection: TextDirection.ltr,
+          textAlign:     TextAlign.center,
+        )..layout(maxWidth: 140);
 
-      final textSpan = TextSpan(
-        text: stations[i],
-        style: TextStyle(color: labelColor, fontSize: 11),
-      );
-      final textPainter = TextPainter(
-        text: textSpan,
-        textAlign: TextAlign.center,
+        final double dotBottom = trackY + (isCurrent ? 12.0 : 8.0);
+        tp.paint(canvas, Offset(x - tp.width / 2, dotBottom + labelGap));
+      }
+    }
+
+    // ── Anchor labels (first & last station, always visible) ───────────────
+    if (stations.length >= 2) {
+      // Left anchor
+      final firstTp = TextPainter(
+        text: TextSpan(
+          text:  stations.first,
+          style: const TextStyle(color: kDim, fontSize: 10),
+        ),
         textDirection: TextDirection.ltr,
       )..layout();
+      firstTp.paint(canvas, Offset(0, size.height - firstTp.height));
 
-      textPainter.paint(
+      // Right anchor
+      final lastTp = TextPainter(
+        text: TextSpan(
+          text:  stations.last,
+          style: const TextStyle(color: kDim, fontSize: 10),
+        ),
+        textDirection: TextDirection.ltr,
+      )..layout();
+      lastTp.paint(
         canvas,
-        Offset(x - textPainter.width / 2, trackY + labelOffset),
+        Offset(totalWidth - lastTp.width, size.height - lastTp.height),
       );
     }
   }
 
   @override
-  bool shouldRepaint(RouteProgressPainter oldDelegate) =>
-      oldDelegate.progress != progress ||
-      oldDelegate.currentStationIndex != currentStationIndex;
+  bool shouldRepaint(RouteProgressPainter old) =>
+      old.progress != progress ||
+      old.currentStationIndex != currentStationIndex ||
+      old.stations != stations;
 }
