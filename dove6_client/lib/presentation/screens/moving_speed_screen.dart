@@ -1,4 +1,3 @@
-// Moving (speed phase) screen — large speed readout and next stop
 import 'package:flutter/material.dart';
 import '../../domain/display_data.dart';
 import '_shared.dart';
@@ -7,36 +6,34 @@ class MovingSpeedScreen extends StatelessWidget {
   final DisplayData data;
   final bool isArabic;
 
-  const MovingSpeedScreen({super.key, required this.data, required this.isArabic});
+  const MovingSpeedScreen({
+    super.key,
+    required this.data,
+    required this.isArabic,
+  });
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: kBg,
-      body: SafeArea(
-        child: Column(
-          children: [
-            SharedHeader(data: data, isArabic: isArabic),
-            Expanded(
+    return ScreenScaffold(
+      child: Column(
+        children: [
+          SharedHeader(data: data, isArabic: isArabic),
+          Expanded(
+            child: Center(
               child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisSize: MainAxisSize.min,
                 children: [
-                  // ── Speed value ───────────────────────────────────────────
+                  // ── Speed ───────────────────────────────────────────────
                   Text(
                     '${data.speedKmh.round()}',
-                    style: const TextStyle(
-                      fontSize: 120,
-                      fontWeight: FontWeight.w200,
-                      color: kPrimary,
-                      letterSpacing: -2,
+                    style: pisMegaDisplay(color: kPrimary).copyWith(
+                      fontWeight: FontWeight.w500,
                     ),
                     textAlign: TextAlign.center,
                   ),
 
                   const SizedBox(height: 8),
 
-                  // ── Unit ──────────────────────────────────────────────────
                   const Text(
                     'km/h',
                     style: TextStyle(
@@ -50,41 +47,49 @@ class MovingSpeedScreen extends StatelessWidget {
 
                   const SizedBox(height: 48),
 
-                  // ── Next stop label ───────────────────────────────────────
-                  Directionality(
-                    textDirection: isArabic ? TextDirection.rtl : TextDirection.ltr,
+                  // ── Label ───────────────────────────────────────────────
+                  const Text(
+                    'Prochain arrêt · المحطة القادمة',
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w500,
+                      color: kSecondary,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+
+                  const SizedBox(height: 10),
+
+                  // ── French (primary) ───────────────────────────────────
+                  FittedBox(
+                    fit: BoxFit.scaleDown,
                     child: Text(
-                      isArabic ? 'المحطة القادمة' : 'Prochain arrêt',
-                      style: const TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w500,
-                        color: kSecondary,
-                      ),
+                      data.nextStationFr,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: pisStationCallout(color: kAccent),
                       textAlign: TextAlign.center,
                     ),
                   ),
 
                   const SizedBox(height: 8),
 
-                  // ── Next stop name ────────────────────────────────────────
+                  // ── Arabic (confirmation) ──────────────────────────────
                   Directionality(
-                    textDirection: isArabic ? TextDirection.rtl : TextDirection.ltr,
+                    textDirection: TextDirection.rtl,
                     child: Text(
-                      isArabic ? data.nextStationAr : data.nextStationFr,
-                      style: const TextStyle(
-                        fontSize: 36,
-                        fontWeight: FontWeight.w700,
-                        color: kAccent,
-                      ),
-                      textAlign: TextAlign.center,
+                      data.nextStationAr,
+                      maxLines: 1,
                       overflow: TextOverflow.ellipsis,
+                      style: pisArabicMedium(color: kDim),
+                      textAlign: TextAlign.center,
                     ),
                   ),
                 ],
               ),
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }

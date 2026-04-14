@@ -1,4 +1,3 @@
-// Arrived message screen — 3-second welcome display after pulling into station
 import 'package:flutter/material.dart';
 import '../../domain/display_data.dart';
 import '_shared.dart';
@@ -7,92 +6,95 @@ class ArrivedMessageScreen extends StatelessWidget {
   final DisplayData data;
   final bool isArabic;
 
-  const ArrivedMessageScreen({super.key, required this.data, required this.isArabic});
+  const ArrivedMessageScreen({
+    super.key,
+    required this.data,
+    required this.isArabic,
+  });
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: kBg,
-      body: SafeArea(
-        child: Column(
-          children: [
-            SharedHeader(data: data, isArabic: isArabic),
-            Expanded(
+    return ScreenScaffold(
+      child: Column(
+        children: [
+          SharedHeader(data: data, isArabic: isArabic),
+          Expanded(
+            child: Center(
               child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisSize: MainAxisSize.min,
                 children: [
-                  // ── Context label ─────────────────────────────────────────
-                  Directionality(
-                    textDirection: isArabic ? TextDirection.rtl : TextDirection.ltr,
-                    child: Text(
-                      isArabic ? 'مرحبا · BIENVENUE' : 'BIENVENUE · مرحبا',
-                      style: const TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.w500,
-                        color: kSecondary,
-                        letterSpacing: 2,
-                      ),
-                      textAlign: TextAlign.center,
+                  const Text(
+                    'BIENVENUE · مرحبا',
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.w500,
+                      color: kSecondary,
+                      letterSpacing: 1.5,
                     ),
+                    textAlign: TextAlign.center,
                   ),
 
                   const SizedBox(height: 16),
 
-                  // ── Station name (primary language) ───────────────────────
-                  Directionality(
-                    textDirection: isArabic ? TextDirection.rtl : TextDirection.ltr,
+                  FittedBox(
+                    fit: BoxFit.scaleDown,
                     child: Text(
-                      isArabic ? data.currentStationAr : data.currentStationFr,
-                      style: const TextStyle(
-                        fontSize: 88,
-                        fontWeight: FontWeight.w700,
-                        color: kAccent,
-                      ),
+                      data.currentStationFr,
+                      style: pisStationHero(color: kAccent),
                       textAlign: TextAlign.center,
+                      maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                     ),
                   ),
 
                   const SizedBox(height: 12),
 
-                  // ── Station name (secondary language) ─────────────────────
                   Directionality(
-                    textDirection: isArabic ? TextDirection.rtl : TextDirection.ltr,
+                    textDirection: TextDirection.rtl,
                     child: Text(
-                      isArabic ? data.currentStationFr : data.currentStationAr,
-                      style: const TextStyle(
-                        fontSize: 30,
-                        fontWeight: FontWeight.w500,
-                        color: kDim,
-                      ),
+                      data.currentStationAr,
+                      style: pisArabicLarge(color: kDim),
                       textAlign: TextAlign.center,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
                     ),
                   ),
 
-                  const SizedBox(height: 16),
+                  const SizedBox(height: 18),
 
-                  // ── Welcome message ───────────────────────────────────────
+                  Text(
+                    'Bienvenue à ${data.currentStationFr}',
+                    style: const TextStyle(
+                      fontSize: 24,
+                      fontWeight: FontWeight.w400,
+                      color: kSecondary,
+                    ),
+                    textAlign: TextAlign.center,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+
+                  const SizedBox(height: 6),
+
                   Directionality(
-                    textDirection: isArabic ? TextDirection.rtl : TextDirection.ltr,
+                    textDirection: TextDirection.rtl,
                     child: Text(
-                      isArabic
-                          ? 'أهلاً بكم في ${data.currentStationAr}'
-                          : 'Bienvenue à ${data.currentStationFr} — Bonne continuation',
+                      'أهلاً بكم في ${data.currentStationAr}',
                       style: const TextStyle(
-                        fontSize: 24,
+                        fontSize: 20,
                         fontWeight: FontWeight.w400,
-                        color: kSecondary,
+                        color: kDim,
                       ),
                       textAlign: TextAlign.center,
+                      maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                     ),
                   ),
                 ],
               ),
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }

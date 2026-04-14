@@ -32,12 +32,7 @@ class EndOfRouteScreen extends StatelessWidget {
                       isArabic
                           ? 'المحطة النهائية · Terminus'
                           : 'Terminus · المحطة النهائية',
-                      style: const TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.w500,
-                        color: kSecondary,
-                        letterSpacing: 2,
-                      ),
+                      style: pisContextLabel(color: kSecondary),
                       textAlign: TextAlign.center,
                     ),
                   ),
@@ -49,11 +44,7 @@ class EndOfRouteScreen extends StatelessWidget {
                     textDirection: isArabic ? TextDirection.rtl : TextDirection.ltr,
                     child: Text(
                       isArabic ? data.destinationAr : data.destinationFr,
-                      style: const TextStyle(
-                        fontSize: 88,
-                        fontWeight: FontWeight.w700,
-                        color: kPrimary,
-                      ),
+                      style: pisStationHero(color: kPrimary),
                       textAlign: TextAlign.center,
                       overflow: TextOverflow.ellipsis,
                     ),
@@ -66,11 +57,7 @@ class EndOfRouteScreen extends StatelessWidget {
                     textDirection: isArabic ? TextDirection.rtl : TextDirection.ltr,
                     child: Text(
                       isArabic ? data.destinationFr : data.destinationAr,
-                      style: const TextStyle(
-                        fontSize: 30,
-                        fontWeight: FontWeight.w500,
-                        color: kDim,
-                      ),
+                      style: pisArabicLarge(color: kDim),
                       textAlign: TextAlign.center,
                     ),
                   ),

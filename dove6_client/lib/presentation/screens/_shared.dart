@@ -1,6 +1,7 @@
 // Shared colours, scaffold, and reusable widgets used by all screens
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import '../../domain/display_data.dart';
 
 // ── Colour constants ──────────────────────────────────────────────────────────
@@ -13,6 +14,84 @@ const kSecondary  = Color(0xFF5F5E5A); // muted — labels / next station
 const kAccent     = Color(0xFFE8650A); // ONCF orange — highlights / current
 const kAccentGold = Color(0xFF333333); // dark grey
 const kDim        = Color(0xFFBFB9B1); // very subtle — anchors / future dots
+
+// ── Typography helpers ────────────────────────────────────────────────────────
+TextStyle pisStationHero({Color color = kPrimary}) =>
+  GoogleFonts.dmSans(
+    fontSize: 96, fontWeight: FontWeight.w700,
+    letterSpacing: -0.01 * 96, height: 1.1, color: color);
+
+TextStyle pisStationPrimary({Color color = kPrimary}) =>
+  GoogleFonts.dmSans(
+    fontSize: 60, fontWeight: FontWeight.w700,
+    letterSpacing: -0.01 * 60, height: 1.15, color: color);
+
+TextStyle pisStationCallout({Color color = kPrimary}) =>
+  GoogleFonts.dmSans(
+    fontSize: 36, fontWeight: FontWeight.w700,
+    height: 1.2, color: color);
+
+TextStyle pisDirectionName({Color color = kPrimary}) =>
+  GoogleFonts.dmSans(
+    fontSize: 30, fontWeight: FontWeight.w700,
+    height: 1.3, color: color);
+
+TextStyle pisArabicLarge({Color color = kDim}) =>
+  GoogleFonts.dmSans(
+    fontSize: 30, fontWeight: FontWeight.w500,
+    height: 1.4, color: color);
+
+TextStyle pisArabicMedium({Color color = kDim}) =>
+  GoogleFonts.dmSans(
+    fontSize: 24, fontWeight: FontWeight.w500,
+    height: 1.4, color: color);
+
+TextStyle pisContextLabel({Color color = kSecondary}) =>
+  GoogleFonts.dmSans(
+    fontSize: 18, fontWeight: FontWeight.w500,
+    letterSpacing: 0.04 * 18, height: 1.3, color: color);
+
+TextStyle pisInfoLabel({Color color = kSecondary}) =>
+  GoogleFonts.dmSans(
+    fontSize: 24, fontWeight: FontWeight.w500,
+    height: 1.3, color: color);
+
+TextStyle pisMegaDisplay({Color color = kPrimary}) =>
+  GoogleFonts.inter(
+    fontSize: 120, fontWeight: FontWeight.w300,
+    letterSpacing: -0.02 * 120, height: 1.0, color: color,
+    fontFeatures: [const FontFeature.tabularFigures()]);
+
+TextStyle pisClock({Color color = kPrimary}) =>
+  GoogleFonts.inter(
+    fontSize: 48, fontWeight: FontWeight.w500,
+    letterSpacing: -0.02 * 48, height: 1.0, color: color,
+    fontFeatures: [const FontFeature.tabularFigures()]);
+
+TextStyle pisHeaderTrainId({Color color = kSecondary}) =>
+  GoogleFonts.dmSans(
+    fontSize: 18, fontWeight: FontWeight.w700,
+    letterSpacing: 0.1, height: 1.2, color: color);
+
+TextStyle pisHeaderMeta({Color color = kDim}) =>
+  GoogleFonts.dmSans(
+    fontSize: 16, fontWeight: FontWeight.w500,
+    height: 1.2, color: color);
+
+TextStyle pisProgressCurrent({Color color = kAccent}) =>
+  GoogleFonts.dmSans(
+    fontSize: 20, fontWeight: FontWeight.w700,
+    height: 1.2, color: color);
+
+TextStyle pisProgressNext({Color color = kPrimary}) =>
+  GoogleFonts.dmSans(
+    fontSize: 18, fontWeight: FontWeight.w700,
+    height: 1.2, color: color);
+
+TextStyle pisProgressOther({Color color = kSecondary}) =>
+  GoogleFonts.dmSans(
+    fontSize: 14, fontWeight: FontWeight.w600,
+    height: 1.2, color: color);
 
 // ── ScreenScaffold ────────────────────────────────────────────────────────────
 class ScreenScaffold extends StatelessWidget {
@@ -148,18 +227,13 @@ class _ClockWidgetState extends State<ClockWidget> {
     final m = _now.minute.toString().padLeft(2, '0');
     return Text.rich(
       TextSpan(
-        style: const TextStyle(
-          fontSize: 48,
-          fontWeight: FontWeight.w400,
-          color: kPrimary,
-          fontFeatures: [FontFeature.tabularFigures()],
-        ),
+        style: pisClock(),
         children: [
           TextSpan(text: h),
           TextSpan(
             text: ':',
             style: TextStyle(
-              color: kPrimary.withValues(alpha: _colonVisible ? 1.0 : 0.2),
+              color: kPrimary.withValues(alpha: _colonVisible ? 1.0 : 0.6),
             ),
           ),
           TextSpan(text: m),
@@ -192,7 +266,7 @@ class SharedHeader extends StatelessWidget {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              // ── Left: ONCF | Z2M · trainId ───────────────────────────────
+              // ── Left: ONCF | Z2M · trainId | pills ───────────────────────
               Row(
                 children: [
                   Image.asset(
@@ -200,15 +274,33 @@ class SharedHeader extends StatelessWidget {
                     height: 48,
                   ),
                   const SizedBox(width: 16),
-                  Container(width: 1, height: 24, color: kBorder),
+                  Container(width: 1, height: 32, color: kBorder),
                   const SizedBox(width: 16),
-                  Text(
-                    'Z2M · ${data.trainId}',
-                    style: const TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w600,
-                      color: kPrimary,
-                      letterSpacing: 1.5,
+                  Text('Z2M', style: pisHeaderTrainId(color: kSecondary)),
+                  const SizedBox(width: 4),
+                  Text('· ${data.trainId}', style: pisHeaderMeta(color: kDim)),
+                  const SizedBox(width: 8),
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                    decoration: BoxDecoration(
+                      color: kSurface,
+                      borderRadius: BorderRadius.circular(6),
+                    ),
+                    child: const Text(
+                      'Voiture 3',
+                      style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500, color: kDim),
+                    ),
+                  ),
+                  const SizedBox(width: 6),
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                    decoration: BoxDecoration(
+                      color: Color(0x1FE8650A), // kAccent.withValues(alpha: 0.12)
+                      borderRadius: BorderRadius.circular(6),
+                    ),
+                    child: const Text(
+                      '1ère Classe',
+                      style: TextStyle(fontSize: 14, fontWeight: FontWeight.w700, color: kAccent),
                     ),
                   ),
                 ],
@@ -274,146 +366,153 @@ class RouteProgressPainter extends CustomPainter {
     this.isArabic = false,
   });
 
+  String _shortenLabel(String text) {
+    final trimmed = text.trim();
+    if (trimmed.length <= 12) return trimmed;
+
+    final words = trimmed.split(' ');
+    if (words.length >= 2) {
+      final first = words.first;
+      final second = words[1];
+      if (first.length <= 5) {
+        final shortSecond = second.length > 3 ? second.substring(0, 3) : second;
+        return '$first $shortSecond.';
+      }
+      final shortFirst = first.length > 8 ? first.substring(0, 8) : first;
+      return '$shortFirst.';
+    }
+
+    final shortText = trimmed.length > 10 ? trimmed.substring(0, 10) : trimmed;
+    return '$shortText…';
+  }
+
+  double _nodeX(int index, int lastIdx, double width) {
+    if (lastIdx <= 0) return width / 2;
+    if (index == 0) return 0;
+    if (index == lastIdx) return width;
+    return width * index / lastIdx;
+  }
+
   @override
   void paint(Canvas canvas, Size size) {
     if (stations.isEmpty) return;
 
-    // Track line sits at this Y — all dot centers are clamped to this value
-    final double trackY  = size.height * 0.40;
-    final int    lastIdx = stations.length - 1;
-    final double totalWidth = size.width;
+    final int lastIdx = stations.length - 1;
+    final double trackY = 20;
+    final double labelTop = 42;
+    final double clampedProgress = progress.clamp(0.0, 1.0);
 
-    // ── Track background ───────────────────────────────────────────────────
+    final Paint baseTrack = Paint()
+      ..color = kBorder
+      ..strokeWidth = 4
+      ..strokeCap = StrokeCap.round
+      ..style = PaintingStyle.stroke;
+
+    final Paint fillTrack = Paint()
+      ..color = kAccent
+      ..strokeWidth = 4
+      ..strokeCap = StrokeCap.round
+      ..style = PaintingStyle.stroke;
+
     canvas.drawLine(
       Offset(0, trackY),
-      Offset(totalWidth, trackY),
-      Paint()
-        ..color       = kBorder
-        ..strokeWidth = 6
-        ..strokeCap   = StrokeCap.round
-        ..style       = PaintingStyle.stroke,
+      Offset(size.width, trackY),
+      baseTrack,
     );
 
-    // ── Track fill orange ──────────────────────────────────────────────────
-    if (progress > 0) {
-      canvas.drawLine(
-        Offset(0, trackY),
-        Offset(progress * totalWidth, trackY),
-        Paint()
-          ..color       = kAccent
-          ..strokeWidth = 6
-          ..strokeCap   = StrokeCap.round
-          ..style       = PaintingStyle.stroke,
-      );
-    }
+    canvas.drawLine(
+      Offset(0, trackY),
+      Offset(size.width * clampedProgress, trackY),
+      fillTrack,
+    );
 
-    // ── Station dots & labels ──────────────────────────────────────────────
     for (int i = 0; i <= lastIdx; i++) {
-      final double x = lastIdx == 0 ? totalWidth / 2 : i * totalWidth / lastIdx;
-      final center   = Offset(x, trackY); // node_center_y == track_center_y
+      final double x = _nodeX(i, lastIdx, size.width);
+      final Offset center = Offset(x, trackY);
 
-      final bool isPassed  = i < currentStationIndex;
+      final bool isPast = i < currentStationIndex;
       final bool isCurrent = i == currentStationIndex;
-      final bool isNext    = i == currentStationIndex + 1;
-      // isFuture = (!isPassed && !isCurrent && !isNext)
+      final bool isFuture = i > currentStationIndex;
 
       if (isCurrent) {
-        // Glow ring
         canvas.drawCircle(
           center,
-          18,
+          14,
           Paint()
-            ..color = kAccent.withValues(alpha: 0.15)
+            ..color = kAccent.withOpacity(0.14)
             ..style = PaintingStyle.fill,
         );
-        // Solid dot
+
         canvas.drawCircle(
           center,
-          12,
+          10,
           Paint()
             ..color = kAccent
             ..style = PaintingStyle.fill,
         );
-      } else if (isPassed) {
+      } else if (isPast) {
         canvas.drawCircle(
           center,
-          8,
+          7,
           Paint()
             ..color = kAccent
             ..style = PaintingStyle.fill,
         );
-      } else if (isNext) {
-        canvas.drawCircle(center, 8, Paint()..color = kBg..style = PaintingStyle.fill);
+      } else if (isFuture) {
         canvas.drawCircle(
           center,
-          8,
+          7,
           Paint()
-            ..color       = kAccent
-            ..style       = PaintingStyle.stroke
-            ..strokeWidth = 2.5,
+            ..color = kBg
+            ..style = PaintingStyle.fill,
         );
-      } else {
-        // Future dot
-        canvas.drawCircle(center, 8, Paint()..color = kBg..style = PaintingStyle.fill);
         canvas.drawCircle(
           center,
-          8,
+          7,
           Paint()
-            ..color       = kBorder
-            ..style       = PaintingStyle.stroke
-            ..strokeWidth = 1.5,
+            ..color = kDim
+            ..strokeWidth = 2
+            ..style = PaintingStyle.stroke,
         );
       }
 
-      // Labels: only current and next
-      if (isCurrent || isNext) {
-        final tp = TextPainter(
-          text: TextSpan(
-            text: stations[i],
-            style: TextStyle(
-              color:      isCurrent ? kAccent : kSecondary,
-              fontSize:   isCurrent ? 14 : 12,
-              fontWeight: isCurrent ? FontWeight.w700 : FontWeight.w500,
-            ),
+      final double slotWidth =
+          lastIdx == 0 ? size.width : size.width / stations.length;
+      final double maxLabelWidth = (slotWidth * 0.92).clamp(52.0, 110.0);
+
+      final String stationLabel = _shortenLabel(stations[i]);
+
+      final TextPainter labelPainter = TextPainter(
+        text: TextSpan(
+          text: stationLabel,
+          style: TextStyle(
+            color: isCurrent ? kAccent : (isPast ? kSecondary : kDim),
+            fontSize: isCurrent ? 12.5 : 10.5,
+            fontWeight: isCurrent ? FontWeight.w700 : FontWeight.w600,
+            height: 1.15,
           ),
-          textDirection: TextDirection.ltr,
-          textAlign:     TextAlign.center,
-        )..layout(maxWidth: 140);
+        ),
+        maxLines: 1,
+        ellipsis: '…',
+        textAlign: TextAlign.center,
+        textDirection: TextDirection.ltr,
+      )..layout(minWidth: 0, maxWidth: maxLabelWidth);
 
-        tp.paint(canvas, Offset(x - tp.width / 2, trackY + 22));
+      double labelX = x - (labelPainter.width / 2);
+      if (labelX < 0) labelX = 0;
+      if (labelX + labelPainter.width > size.width) {
+        labelX = size.width - labelPainter.width;
       }
-    }
 
-    // ── Anchor labels (first & last station, always visible) ───────────────
-    if (stations.length >= 2) {
-      // Left anchor
-      final firstTp = TextPainter(
-        text: TextSpan(
-          text:  stations.first,
-          style: const TextStyle(color: kDim, fontSize: 10),
-        ),
-        textDirection: TextDirection.ltr,
-      )..layout();
-      firstTp.paint(canvas, Offset(0, size.height - firstTp.height));
-
-      // Right anchor
-      final lastTp = TextPainter(
-        text: TextSpan(
-          text:  stations.last,
-          style: const TextStyle(color: kDim, fontSize: 10),
-        ),
-        textDirection: TextDirection.ltr,
-      )..layout();
-      lastTp.paint(
-        canvas,
-        Offset(totalWidth - lastTp.width, size.height - lastTp.height),
-      );
+      labelPainter.paint(canvas, Offset(labelX, labelTop));
     }
   }
 
   @override
-  bool shouldRepaint(RouteProgressPainter old) =>
-      old.progress != progress ||
-      old.currentStationIndex != currentStationIndex ||
-      old.stations != stations;
+  bool shouldRepaint(covariant RouteProgressPainter oldDelegate) {
+    return oldDelegate.stations != stations ||
+        oldDelegate.progress != progress ||
+        oldDelegate.currentStationIndex != currentStationIndex ||
+        oldDelegate.isArabic != isArabic;
+  }
 }

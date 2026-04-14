@@ -1,5 +1,6 @@
 // Idle state screen — ONCF logo, subtitle, and bilingual welcome message
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import '../../domain/display_data.dart';
 import '_shared.dart';
 
@@ -28,36 +29,33 @@ class IdleScreen extends StatelessWidget {
                     fit: BoxFit.contain,
                   ),
                   const SizedBox(height: 32),
-                  const Text(
+                  Text(
                     'OFFICE NATIONAL DES CHEMINS DE FER',
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w500,
-                      color: kSecondary,
-                      letterSpacing: 3,
-                    ),
+                    style: pisContextLabel(color: kSecondary),
                     textAlign: TextAlign.center,
                   ),
                   const SizedBox(height: 16),
                   isArabic
-                    ? const Directionality(
+                    ? Directionality(
                         textDirection: TextDirection.rtl,
                         child: Text(
                           'مرحباً بكم',
-                          style: TextStyle(
+                          style: GoogleFonts.dmSans(
                             fontSize: 28,
                             fontWeight: FontWeight.w400,
                             color: kDim,
+                            height: 1.3,
                           ),
                           textAlign: TextAlign.center,
                         ),
                       )
-                    : const Text(
+                    : Text(
                         'Bienvenue · مرحباً بكم',
-                        style: TextStyle(
+                        style: GoogleFonts.dmSans(
                           fontSize: 28,
                           fontWeight: FontWeight.w400,
                           color: kDim,
+                          height: 1.3,
                         ),
                         textAlign: TextAlign.center,
                       ),

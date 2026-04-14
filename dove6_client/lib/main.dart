@@ -17,7 +17,7 @@ const bool useLocalSimulation = false;
 // or the WSL-internal IP, because the server runs inside WSL on the dev machine.
 const String _apiBaseUrl = String.fromEnvironment(
   'API_BASE_URL',
-  defaultValue: 'http://192.168.137.1:8080',
+  defaultValue: 'http://127.0.0.1:8080',
 );
 // ─────────────────────────────────────────────────────────────────────────────
 

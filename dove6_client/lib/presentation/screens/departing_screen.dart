@@ -1,4 +1,3 @@
-// Departing screen — station identity and next stop, fully centered
 import 'package:flutter/material.dart';
 import '../../domain/display_data.dart';
 import '_shared.dart';
@@ -7,106 +6,98 @@ class DepartingScreen extends StatelessWidget {
   final DisplayData data;
   final bool isArabic;
 
-  const DepartingScreen({super.key, required this.data, required this.isArabic});
+  const DepartingScreen({
+    super.key,
+    required this.data,
+    required this.isArabic,
+  });
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: kBg,
-      body: SafeArea(
-        child: Column(
-          children: [
-            SharedHeader(data: data, isArabic: isArabic),
-            Expanded(
+    return ScreenScaffold(
+      child: Column(
+        children: [
+          SharedHeader(data: data, isArabic: isArabic),
+          Expanded(
+            child: Center(
               child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisSize: MainAxisSize.min,
                 children: [
-                  // ── Context label ─────────────────────────────────────────
-                  Directionality(
-                    textDirection: isArabic ? TextDirection.rtl : TextDirection.ltr,
-                    child: Text(
-                      isArabic ? 'المغادرة · Départ' : 'Départ · المغادرة',
-                      style: const TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.w500,
-                        color: kSecondary,
-                        letterSpacing: 2,
-                      ),
-                      textAlign: TextAlign.center,
+                  const Text(
+                    'Départ · المغادرة',
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.w500,
+                      color: kSecondary,
+                      letterSpacing: 1.5,
                     ),
+                    textAlign: TextAlign.center,
                   ),
-
                   const SizedBox(height: 24),
-
-                  // ── Station name (primary language) ───────────────────────
-                  Directionality(
-                    textDirection: isArabic ? TextDirection.rtl : TextDirection.ltr,
+                  FittedBox(
+                    fit: BoxFit.scaleDown,
                     child: Text(
-                      isArabic ? data.currentStationAr : data.currentStationFr,
+                      data.currentStationFr,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
                       style: const TextStyle(
                         fontSize: 80,
                         fontWeight: FontWeight.w700,
+                        letterSpacing: -0.8,
+                        height: 1.1,
                         color: kPrimary,
                       ),
                       textAlign: TextAlign.center,
-                      overflow: TextOverflow.ellipsis,
                     ),
                   ),
-
                   const SizedBox(height: 12),
-
-                  // ── Station name (secondary language) ─────────────────────
                   Directionality(
-                    textDirection: isArabic ? TextDirection.rtl : TextDirection.ltr,
+                    textDirection: TextDirection.rtl,
                     child: Text(
-                      isArabic ? data.currentStationFr : data.currentStationAr,
-                      style: const TextStyle(
-                        fontSize: 28,
-                        fontWeight: FontWeight.w500,
-                        color: kDim,
-                      ),
-                      textAlign: TextAlign.center,
-                    ),
-                  ),
-
-                  const SizedBox(height: 40),
-
-                  // ── Next stop label ───────────────────────────────────────
-                  Directionality(
-                    textDirection: isArabic ? TextDirection.rtl : TextDirection.ltr,
-                    child: Text(
-                      isArabic ? 'المحطة القادمة' : 'Prochain arrêt',
-                      style: const TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w500,
-                        color: kSecondary,
-                      ),
-                      textAlign: TextAlign.center,
-                    ),
-                  ),
-
-                  const SizedBox(height: 8),
-
-                  // ── Next stop name ────────────────────────────────────────
-                  Directionality(
-                    textDirection: isArabic ? TextDirection.rtl : TextDirection.ltr,
-                    child: Text(
-                      isArabic ? data.nextStationAr : data.nextStationFr,
-                      style: const TextStyle(
-                        fontSize: 36,
-                        fontWeight: FontWeight.w700,
-                        color: kAccent,
-                      ),
-                      textAlign: TextAlign.center,
+                      data.currentStationAr,
+                      maxLines: 1,
                       overflow: TextOverflow.ellipsis,
+                      style: pisArabicLarge(color: kDim),
+                      textAlign: TextAlign.center,
+                    ),
+                  ),
+                  const SizedBox(height: 40),
+                  const Text(
+                    'Prochain arrêt',
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w500,
+                      color: kSecondary,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                  const SizedBox(height: 8),
+                  FittedBox(
+                    fit: BoxFit.scaleDown,
+                    child: Text(
+                      data.nextStationFr,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: pisStationCallout(color: kAccent),
+                      textAlign: TextAlign.center,
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  Directionality(
+                    textDirection: TextDirection.rtl,
+                    child: Text(
+                      data.nextStationAr,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: pisArabicMedium(color: kDim),
+                      textAlign: TextAlign.center,
                     ),
                   ),
                 ],
               ),
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
