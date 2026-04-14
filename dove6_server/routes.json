@@ -1,0 +1,22 @@
+{
+  "active_route": "casa_tanger",
+  "routes": {
+    "casa_tanger": {
+      "name": "Casa Voyageurs → Tanger Ville",
+      "destination": "Tanger Ville",
+      "destination_ar": "طنجة المدينة",
+      "stations_fr": [
+        "Casa Voyageurs",
+        "Rabat Ville",
+        "Kénitra",
+        "Tanger Ville"
+      ],
+      "stations_ar": [
+        "الدار البيضاء المسافرين",
+        "الرباط المدينة",
+        "القنيطرة",
+        "طنجة المدينة"
+      ]
+    }
+  }
+}
