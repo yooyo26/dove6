@@ -78,7 +78,8 @@ class _DisplayMapperState extends State<DisplayMapper> {
   }
 
   Widget _buildScreen() {
-    final state = _data.state;
+    final state    = _data.state;
+    final isArabic = _data.activeAudioLang == 'ar';
 
     // Priority states
     if (state == TrainState.warning) {
@@ -111,30 +112,31 @@ class _DisplayMapperState extends State<DisplayMapper> {
 
     switch (state) {
       case TrainState.idle:
-        return IdleScreen(key: const ValueKey('idle'), data: _data);
+        return IdleScreen(key: const ValueKey('idle'), data: _data, isArabic: isArabic);
       case TrainState.routeSelected:
-        return RouteSelectedScreen(key: const ValueKey('routeSelected'), data: _data);
+        return RouteSelectedScreen(key: const ValueKey('routeSelected'), data: _data, isArabic: isArabic);
       case TrainState.atStation:
         if (_showArrivedMessage) {
           return ArrivedMessageScreen(
             key: ValueKey('arrived-${_data.currentStation}'),
             data: _data,
+            isArabic: isArabic,
           );
         }
-        return StationScreen(key: ValueKey('station-${_data.currentStation}'), data: _data);
+        return StationScreen(key: ValueKey('station-${_data.currentStation}'), data: _data, isArabic: isArabic);
       case TrainState.departing:
-        return DepartingScreen(key: const ValueKey('departing'), data: _data);
+        return DepartingScreen(key: const ValueKey('departing'), data: _data, isArabic: isArabic);
       case TrainState.moving:
         if (_showSpeedPhase) {
-          return MovingSpeedScreen(key: const ValueKey('movingSpeed'), data: _data);
+          return MovingSpeedScreen(key: const ValueKey('movingSpeed'), data: _data, isArabic: isArabic);
         }
-        return MovingProgressScreen(key: const ValueKey('movingProgress'), data: _data);
+        return MovingProgressScreen(key: const ValueKey('movingProgress'), data: _data, isArabic: isArabic);
       case TrainState.arriving:
-        return ArrivingScreen(key: const ValueKey('arriving'), data: _data);
+        return ArrivingScreen(key: const ValueKey('arriving'), data: _data, isArabic: isArabic);
       case TrainState.endOfRoute:
-        return EndOfRouteScreen(key: const ValueKey('endOfRoute'), data: _data);
+        return EndOfRouteScreen(key: const ValueKey('endOfRoute'), data: _data, isArabic: isArabic);
       default:
-        return IdleScreen(key: const ValueKey('idle-default'), data: _data);
+        return IdleScreen(key: const ValueKey('idle-default'), data: _data, isArabic: isArabic);
     }
   }
 

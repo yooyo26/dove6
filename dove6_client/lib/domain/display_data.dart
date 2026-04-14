@@ -11,6 +11,13 @@ class DisplayData {
   final double routeProgress; // 0.0 to 1.0
   final List<String> routeStations;
   final DateTime timestamp;
+  final String currentStationFr;
+  final String currentStationAr;
+  final String nextStationFr;
+  final String nextStationAr;
+  final String destinationFr;
+  final String destinationAr;
+  final String activeAudioLang;
 
   const DisplayData({
     required this.state,
@@ -22,6 +29,13 @@ class DisplayData {
     required this.routeProgress,
     required this.routeStations,
     required this.timestamp,
+    required this.currentStationFr,
+    required this.currentStationAr,
+    required this.nextStationFr,
+    required this.nextStationAr,
+    required this.destinationFr,
+    required this.destinationAr,
+    required this.activeAudioLang,
   });
 
   DisplayData copyWith({
@@ -34,6 +48,13 @@ class DisplayData {
     double? routeProgress,
     List<String>? routeStations,
     DateTime? timestamp,
+    String? currentStationFr,
+    String? currentStationAr,
+    String? nextStationFr,
+    String? nextStationAr,
+    String? destinationFr,
+    String? destinationAr,
+    String? activeAudioLang,
   }) {
     return DisplayData(
       state: state ?? this.state,
@@ -45,6 +66,13 @@ class DisplayData {
       routeProgress: routeProgress ?? this.routeProgress,
       routeStations: routeStations ?? this.routeStations,
       timestamp: timestamp ?? this.timestamp,
+      currentStationFr: currentStationFr ?? this.currentStationFr,
+      currentStationAr: currentStationAr ?? this.currentStationAr,
+      nextStationFr: nextStationFr ?? this.nextStationFr,
+      nextStationAr: nextStationAr ?? this.nextStationAr,
+      destinationFr: destinationFr ?? this.destinationFr,
+      destinationAr: destinationAr ?? this.destinationAr,
+      activeAudioLang: activeAudioLang ?? this.activeAudioLang,
     );
   }
 
@@ -63,5 +91,12 @@ class DisplayData {
       'Tanger Ville',
     ],
     timestamp: DateTime.now(),
+    currentStationFr: 'Casa Voyageurs',
+    currentStationAr: 'Casa Voyageurs',
+    nextStationFr: 'Rabat Agdal',
+    nextStationAr: 'Rabat Agdal',
+    destinationFr: 'Tanger Ville',
+    destinationAr: 'Tanger Ville',
+    activeAudioLang: '',
   );
 }

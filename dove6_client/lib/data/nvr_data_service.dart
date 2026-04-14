@@ -52,6 +52,13 @@ class NvrDataService implements DataService {
       routeProgress: (j['route_progress'] as num).toDouble(),
       routeStations: List<String>.from(j['route_stations'] as List),
       timestamp: DateTime.now(),
+      currentStationFr: (j['current_station_fr'] ?? j['current_station']) as String,
+      currentStationAr: (j['current_station_ar'] ?? j['current_station']) as String,
+      nextStationFr:    (j['next_station_fr']    ?? j['next_station'])    as String,
+      nextStationAr:    (j['next_station_ar']    ?? j['next_station'])    as String,
+      destinationFr:    (j['destination_fr']     ?? j['destination'])     as String,
+      destinationAr:    (j['destination_ar']     ?? j['destination'])     as String,
+      activeAudioLang:  (j['active_audio_lang']  ?? '')                   as String,
     );
   }
 

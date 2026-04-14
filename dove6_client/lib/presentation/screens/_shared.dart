@@ -119,24 +119,26 @@ class ClockWidget extends StatefulWidget {
 }
 
 class _ClockWidgetState extends State<ClockWidget> {
-  Timer? _timer;
+  Timer? _clockTimer;
+  Timer? _colonTimer;
   bool _colonVisible = true;
   DateTime _now = DateTime.now();
 
   @override
   void initState() {
     super.initState();
-    _timer = Timer.periodic(const Duration(milliseconds: 500), (_) {
-      setState(() {
-        _colonVisible = !_colonVisible;
-        _now = DateTime.now();
-      });
+    _clockTimer = Timer.periodic(const Duration(seconds: 1), (_) {
+      setState(() => _now = DateTime.now());
+    });
+    _colonTimer = Timer.periodic(const Duration(milliseconds: 500), (_) {
+      setState(() => _colonVisible = !_colonVisible);
     });
   }
 
   @override
   void dispose() {
-    _timer?.cancel();
+    _clockTimer?.cancel();
+    _colonTimer?.cancel();
     super.dispose();
   }
 
@@ -193,14 +195,9 @@ class SharedHeader extends StatelessWidget {
               // ── Left: ONCF | Z2M · trainId ───────────────────────────────
               Row(
                 children: [
-                  const Text(
-                    'ONCF',
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.w700,
-                      color: kAccent,
-                      letterSpacing: 3,
-                    ),
+                  Image.asset(
+                    'assets/images/Logo-oncf.png',
+                    height: 48,
                   ),
                   const SizedBox(width: 16),
                   Container(width: 1, height: 24, color: kBorder),
@@ -282,14 +279,13 @@ class RouteProgressPainter extends CustomPainter {
     if (stations.isEmpty) return;
 
     // Track line sits at this Y — all dot centers are clamped to this value
-    const double trackY     = 26.0;
-    const double labelGap   = 8.0;
-    final int    lastIdx    = stations.length - 1;
+    final double trackY  = size.height * 0.40;
+    final int    lastIdx = stations.length - 1;
     final double totalWidth = size.width;
 
     // ── Track background ───────────────────────────────────────────────────
     canvas.drawLine(
-      const Offset(0, trackY),
+      Offset(0, trackY),
       Offset(totalWidth, trackY),
       Paint()
         ..color       = kBorder
@@ -301,7 +297,7 @@ class RouteProgressPainter extends CustomPainter {
     // ── Track fill orange ──────────────────────────────────────────────────
     if (progress > 0) {
       canvas.drawLine(
-        const Offset(0, trackY),
+        Offset(0, trackY),
         Offset(progress * totalWidth, trackY),
         Paint()
           ..color       = kAccent
@@ -384,8 +380,7 @@ class RouteProgressPainter extends CustomPainter {
           textAlign:     TextAlign.center,
         )..layout(maxWidth: 140);
 
-        final double dotBottom = trackY + (isCurrent ? 12.0 : 8.0);
-        tp.paint(canvas, Offset(x - tp.width / 2, dotBottom + labelGap));
+        tp.paint(canvas, Offset(x - tp.width / 2, trackY + 22));
       }
     }
 

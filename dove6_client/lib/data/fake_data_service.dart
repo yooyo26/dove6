@@ -56,16 +56,26 @@ class FakeDataService implements DataService {
 
   void _emit(int index) {
     final s = _script[index];
+    final cur = _stations[s['cur'] as int];
+    final nxt = _stations[s['nxt'] as int];
+    final dst = _stations.last;
     _controller.add(DisplayData(
       state: s['state'] as TrainState,
       trainId: 'DOVE-6',
-      currentStation: _stations[s['cur'] as int],
-      nextStation: _stations[s['nxt'] as int],
-      destination: _stations.last,
+      currentStation: cur,
+      nextStation: nxt,
+      destination: dst,
       speedKmh: s['spd'] as double,
       routeProgress: s['prg'] as double,
       routeStations: _stations,
       timestamp: DateTime.now(),
+      currentStationFr: cur,
+      currentStationAr: cur,
+      nextStationFr:    nxt,
+      nextStationAr:    nxt,
+      destinationFr:    dst,
+      destinationAr:    dst,
+      activeAudioLang:  '',
     ));
   }
 
