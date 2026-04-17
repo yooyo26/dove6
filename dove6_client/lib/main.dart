@@ -1,29 +1,42 @@
-// Entry point — instantiates the data service and launches the app
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:window_manager/window_manager.dart';
 import 'data/data_service.dart';
 import 'data/fake_data_service.dart';
 import 'data/nvr_data_service.dart';
 import 'presentation/display_mapper.dart';
 
-// ── Configuration ─────────────────────────────────────────────────────────────
-// Set to true  → uses local fake simulation (no server needed)
-// Set to false → polls the Go server at _apiBaseUrl
 const bool useLocalSimulation = false;
-
-// Base URL of the Go NVR server.
-// Override at build time:  --dart-define=API_BASE_URL=http://192.168.137.1:8080
-// Board connects to the Windows Ethernet IP (192.168.137.1), NOT to localhost
-// or the WSL-internal IP, because the server runs inside WSL on the dev machine.
 const String _apiBaseUrl = String.fromEnvironment(
   'API_BASE_URL',
-  defaultValue: 'http://127.0.0.1:8080',
+  defaultValue: 'http://192.168.137.1:8080',
 );
-// ─────────────────────────────────────────────────────────────────────────────
 
-void main() {
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
+
+  await windowManager.ensureInitialized();
+
+  const WindowOptions windowOptions = WindowOptions(
+    fullScreen: true,
+    backgroundColor: Color(0xFFE8E4DF),
+    skipTaskbar: true,
+    titleBarStyle: TitleBarStyle.hidden,
+  );
+
+  await windowManager.waitUntilReadyToShow(
+    windowOptions,
+    () async {
+      await windowManager.show();
+      await windowManager.focus();
+      await windowManager.setFullScreen(true);
+    },
+  );
+
+  SystemChrome.setEnabledSystemUIMode(
+    SystemUiMode.immersiveSticky,
+  );
+
   runApp(const Dove6App());
 }
 
